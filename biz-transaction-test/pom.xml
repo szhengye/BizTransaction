@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>biz-transaction</artifactId>
+        <groupId>com.bizmda</groupId>
+        <version>0.0.1</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>om.bizmda</groupId>
+
+    <description>BizTransaction事务中间件测试</description>
+    <artifactId>biz-transaction-test</artifactId>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>com.bizmda</groupId>
+            <artifactId>biz-transaction-common</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!--guava-->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>19.0</version>
+        </dependency>
+<!--
+        <dependency>
+            <groupId>com.bizmda</groupId>
+            <artifactId>rabbitmq-spring-boot-starter</artifactId>
+            <version>${core.version}</version>
+        </dependency>
+-->
+        <dependency>
+            <groupId>com.bizmda</groupId>
+            <artifactId>biz-transaction-common</artifactId>
+            <version>${core.version}</version>
+        </dependency>
+    </dependencies>
+<!--
+        <dependencyManagement>
+            <dependencies>
+                <dependency>
+                    <groupId>com.bizmda</groupId>
+                    <artifactId>biz-transaction-common</artifactId>
+                    <version>${core.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.bizmda</groupId>
+                    <artifactId>rabbitmq-spring-boot-starter</artifactId>
+                    <version>${core.version}</version>
+                </dependency>
+            </dependencies>
+        </dependencyManagement>
+-->
+-->
+</project>
