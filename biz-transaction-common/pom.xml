@@ -11,26 +11,23 @@
 
     <description>BizTransaction分布式事务中间件</description>
     <artifactId>biz-transaction-common</artifactId>
-    <groupId>com.bizmda</groupId>
 
     <dependencies>
         <dependency>
             <groupId>com.bizmda</groupId>
             <artifactId>biz-transaction</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-amqp</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
         </dependency>
 
         <!--guava-->
@@ -39,23 +36,7 @@
             <artifactId>guava</artifactId>
             <version>19.0</version>
         </dependency>
-<!--
-        <dependency>
-            <groupId>com.bizmda</groupId>
-            <artifactId>rabbitmq-spring-boot-starter</artifactId>
-            <version>${core.version}</version>
-        </dependency>
--->
+
     </dependencies>
-<!--
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.bizmda</groupId>
-                <artifactId>rabbitmq-spring-boot-starter</artifactId>
-                <version>${core.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
--->
+
 </project>

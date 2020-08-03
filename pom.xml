@@ -12,85 +12,18 @@
         <module>biz-transaction-test</module>
     </modules>
 
-
-    <!-- ~ ~ Copyright (c) 2018-2025, open-capacity-platform All rights reserved.
-        ~ ~ Redistribution and use in source and binary forms, with or without ~
-        modification, are permitted provided that the following conditions are met:
-        ~ ~ Redistributions of source code must retain the above copyright notice,
-        ~ this list of conditions and the following disclaimer. ~ Redistributions
-        in binary form must reproduce the above copyright ~ notice, this list of
-        conditions and the following disclaimer in the ~ documentation and/or other
-        materials provided with the distribution. ~ Neither the name of the open-capacity-platform
-        developer nor the names of its ~ contributors may be used to endorse or promote
-        products derived from ~ this software without specific prior written permission.
-        ~ Author: owen gitgeek (624191343@qq.com) ~ -->
-
     <properties>
         <java.version>1.8</java.version>
         <core.version>0.0.1</core.version>
         <log4j2.version>2.1</log4j2.version>
-        <jasypt.version>1.14</jasypt.version>
-        <hutool.version>5.1.0</hutool.version>
-        <fastjson.version>1.2.70</fastjson.version>
-        <disruptor.version>3.4.1</disruptor.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <docker.host>http://59.110.164.254:5555</docker.host>
-        <docker.image.prefix>owenwangwen</docker.image.prefix>
         <spring-boot.version>2.1.15.RELEASE</spring-boot.version>
-        <spring-platform.version>Cairo-SR3</spring-platform.version>
-        <spring.social.version>1.1.6.RELEASE</spring.social.version>
-        <spring-security.version>5.1.1.RELEASE</spring-security.version>
-        <security-oauth2.version>2.3.6.RELEASE</security-oauth2.version>
-        <commons-collections4.version>4.1</commons-collections4.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <hibernate-validator.verion>6.0.18.Final</hibernate-validator.verion>
-        <flowable.version>6.4.1</flowable.version>
-        <spring-cloud-dependencies.version>Greenwich.SR6</spring-cloud-dependencies.version>
     </properties>
 
 
     <dependencies>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-collections4</artifactId>
-            <version>${commons-collections4.version}</version>
-        </dependency>
-<!--
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-            <version>${fastjson.version}</version>
-        </dependency>
--->
-        <!--
-		<dependency>
-		    <groupId>com.google.code.gson</groupId>
-		    <artifactId>gson</artifactId>
-		</dependency>
-        -->
-        
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
 
-        <!-- Micrometer Prometheus registry -->
-        <!--
-        <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-registry-prometheus</artifactId>
-        </dependency>
-        -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>
@@ -101,40 +34,13 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <dependency>
-                <groupId>io.spring.platform</groupId>
-                <artifactId>platform-bom</artifactId>
-                <version>${spring-platform.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <!--
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-dependencies</artifactId>
-                <version>${spring-cloud-dependencies.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.security.oauth</groupId>
-                <artifactId>spring-security-oauth2</artifactId>
-                <version>${security-oauth2.version}</version>
-            </dependency>
--->
+
             <dependency>
                 <groupId>com.bizmda</groupId>
                 <artifactId>biz-transaction</artifactId>
                 <version>${core.version}</version>
             </dependency>
-            <!-- rabbitmq模块 -->
-            <!--
-            <dependency>
-                <groupId>com.bizmda</groupId>
-                <artifactId>rabbitmq-spring-boot-starter</artifactId>
-                <version>${core.version}</version>
-            </dependency>
-            -->
+
             <!-- biz-transaction-common模块 -->
             <dependency>
                 <groupId>com.bizmda</groupId>
@@ -222,51 +128,5 @@
             </snapshots>
         </repository>
     </repositories>
-	<!--
 
-	<distributionManagement>
-        <repository>
-            <id>ocp-releases</id>
-            <name>ocp Release Repository</name>
-            <url>http://106.13.3.200:8081/repository/maven-releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>ocp-snapshots</id>
-            <name>ocp Snapshot Repository</name>
-            <url>http://106.13.3.200:8081/repository/maven-snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
-
-    <!-profile defined-->
-    <!--
-    <profiles>
-        <profile>
-            <id>dev</id>
-            <properties>
-                <maven.env>development</maven.env>
-            </properties>
-        </profile>
-        <profile>
-            <id>test</id>
-            <properties>
-                <maven.env>test</maven.env>
-            </properties>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-        </profile>
-        <profile>
-            <id>pre</id>
-            <properties>
-                <maven.env>pre</maven.env>
-            </properties>
-        </profile>
-        <profile>
-            <id>prod</id>
-            <properties>
-                <maven.env>prod</maven.env>
-            </properties>
-        </profile>
-    </profiles>
-    -->
 </project>
