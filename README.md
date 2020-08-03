@@ -30,7 +30,9 @@ Biz-Transaction分布式事务中间件采用方案是：
 4. 运行```src/com/bizmda/biztransaction/TransactionMqCenterApp.java```；
 
 ### 运行测试案例
+
 1. 访问"`http://127.0.0.1:8080/app1`"
+
 浏览器响应：
 ```
 doInnerService1->doOuterService(true)->doInnerService2
@@ -45,4 +47,85 @@ doInnerService1->doOuterService(true)->doInnerService2
 2020-08-03 13:47:12.292  INFO 57377 --- [nio-8080-exec-1] c.b.b.test.service.ApplicationService1   : doInnerService2()
 2020-08-03 13:47:12.293  INFO 57377 --- [nio-8080-exec-1] c.b.b.test.service.TestInnerService2     : TestInnerService2.process()
 ```
-2. 访问"http://127.0.0.1:8080/app1"，响应"doInnerService1->doOuterService(true)->doInnerService2"
+
+2. 访问"`http://127.0.0.1:8080/app2`"
+
+浏览器响应：
+```
+doInnerService1->doOuterService(false)->cancelInnerService1
+```
+后台运行日志：
+```
+2020-08-03 13:57:39.232  INFO 57377 --- [nio-8080-exec-5] c.b.b.test.controller.TestController     : doInnerService1->doOuterService(false)->cancelInnerService1
+2020-08-03 13:57:39.235  INFO 57377 --- [nio-8080-exec-5] c.b.b.test.service.TestInnerService1     : TestInnerService1.process()
+2020-08-03 13:57:39.236  INFO 57377 --- [nio-8080-exec-5] c.b.b.test.service.ApplicationService2   : doOuterService()
+2020-08-03 13:57:39.236  INFO 57377 --- [nio-8080-exec-5] c.b.b.test.service.TestOuterService      : TestOuterService.process()
+2020-08-03 13:57:42.237  INFO 57377 --- [nio-8080-exec-5] c.b.b.test.service.ApplicationService2   : cancelInnerService1()
+2020-08-03 13:57:42.238  INFO 57377 --- [nio-8080-exec-5] c.b.b.test.service.TestInnerService1     : TestInnerService1.cancel()
+```
+
+3. 访问"`http://127.0.0.1:8080/app3`"
+
+浏览器响应：
+```
+doInnerService1->doOuterService(timeout)->confirmOuterService(true)->doInnerService2
+```
+后台运行日志：
+```
+2020-08-03 13:58:49.141  INFO 57377 --- [ntContainer#0-1] c.b.b.test.service.ApplicationService3   : confirmOuterService()
+2020-08-03 13:58:49.142  INFO 57377 --- [ntContainer#0-1] c.b.b.test.service.TestOuterService      : TestOuterService.confirmTimeoutAndReturn(true)
+2020-08-03 13:58:49.791  INFO 57377 --- [nio-8080-exec-8] c.b.b.test.controller.TestController     : doInnerService1->doOuterService(timeout)->confirmOuterService(true)->doInnerService2
+2020-08-03 13:58:49.792  INFO 57377 --- [nio-8080-exec-8] c.b.b.test.service.TestInnerService1     : TestInnerService1.process()
+2020-08-03 13:58:49.792  INFO 57377 --- [nio-8080-exec-8] c.b.b.test.service.ApplicationService3   : doOuterService()
+2020-08-03 13:58:49.792  INFO 57377 --- [nio-8080-exec-8] c.b.b.test.service.TestOuterService      : TestOuterService.processWithTimeout()
+2020-08-03 13:58:52.146  INFO 57377 --- [ntContainer#0-1] c.b.b.service.RabbitSenderService        : sendTTLExpireMsg(1, applicationService3, 3, hello, null)
+2020-08-03 13:58:52.146  INFO 57377 --- [ntContainer#0-1] c.b.b.service.RabbitSenderService        : Message expiration：8000
+2020-08-03 13:58:52.164  INFO 57377 --- [ 127.0.0.1:5672] c.b.b.config.RabbitmqConfig              : 消息发送成功:correlationData(null),ack(true),cause(null)
+2020-08-03 13:58:52.797  INFO 57377 --- [nio-8080-exec-8] c.b.b.service.RabbitSenderService        : sendTTLExpireMsg(1, applicationService3, 0, hello, null)
+2020-08-03 13:58:52.797  INFO 57377 --- [nio-8080-exec-8] c.b.b.service.RabbitSenderService        : Message expiration：0
+2020-08-03 13:58:52.819  INFO 57377 --- [ 127.0.0.1:5672] c.b.b.config.RabbitmqConfig              : 消息发送成功:correlationData(null),ack(true),cause(null)
+2020-08-03 13:59:00.152  INFO 57377 --- [ntContainer#0-3] c.b.b.test.service.ApplicationService3   : confirmOuterService()
+2020-08-03 13:59:00.152  INFO 57377 --- [ntContainer#0-2] c.b.b.test.service.ApplicationService3   : confirmOuterService()
+2020-08-03 13:59:00.152  INFO 57377 --- [ntContainer#0-3] c.b.b.test.service.TestOuterService      : TestOuterService.confirmTimeoutAndReturn(true)
+2020-08-03 13:59:00.152  INFO 57377 --- [ntContainer#0-2] c.b.b.test.service.TestOuterService      : TestOuterService.confirmTimeoutAndReturn(true)
+2020-08-03 13:59:03.156  INFO 57377 --- [ntContainer#0-2] c.b.b.test.service.ApplicationService3   : doInnerService2()
+2020-08-03 13:59:03.156  INFO 57377 --- [ntContainer#0-2] c.b.b.test.service.TestInnerService2     : TestInnerService2.process()
+2020-08-03 13:59:03.158  INFO 57377 --- [ntContainer#0-3] c.b.b.service.RabbitSenderService        : sendTTLExpireMsg(1, applicationService3, 4, hello, null)
+2020-08-03 13:59:03.159  INFO 57377 --- [ntContainer#0-3] c.b.b.service.RabbitSenderService        : Message expiration：16000
+2020-08-03 13:59:03.174  INFO 57377 --- [ 127.0.0.1:5672] c.b.b.config.RabbitmqConfig              : 消息发送成功:correlationData(null),ack(true),cause(null)
+2020-08-03 13:59:19.186  INFO 57377 --- [ntContainer#0-4] c.b.b.test.service.ApplicationService3   : confirmOuterService()
+2020-08-03 13:59:19.186  INFO 57377 --- [ntContainer#0-4] c.b.b.test.service.TestOuterService      : TestOuterService.confirmTimeoutAndReturn(true)
+2020-08-03 13:59:22.190  INFO 57377 --- [ntContainer#0-4] c.b.b.test.service.ApplicationService3   : doInnerService2()
+2020-08-03 13:59:22.191  INFO 57377 --- [ntContainer#0-4] c.b.b.test.service.TestInnerService2     : TestInnerService2.process()
+```
+
+4. 访问"`http://127.0.0.1:8080/app4`"
+
+浏览器响应：
+```
+doInnerService1->doOuterService(timeout)->confirmOuterService(false)->cancelInnerService1
+```
+后台运行日志：
+```
+2020-08-03 14:00:32.617  INFO 57377 --- [nio-8080-exec-2] c.b.b.test.controller.TestController     : doInnerService1->doOuterService(timeout)->confirmOuterService(false)->cancelInnerService1
+2020-08-03 14:00:32.617  INFO 57377 --- [nio-8080-exec-2] c.b.b.test.service.TestInnerService1     : TestInnerService1.process()
+2020-08-03 14:00:32.618  INFO 57377 --- [nio-8080-exec-2] c.b.b.test.service.ApplicationService4   : doOuterService()
+2020-08-03 14:00:32.618  INFO 57377 --- [nio-8080-exec-2] c.b.b.test.service.TestOuterService      : TestOuterService.processWithTimeout()
+2020-08-03 14:00:35.624  INFO 57377 --- [nio-8080-exec-2] c.b.b.service.RabbitSenderService        : sendTTLExpireMsg(1, applicationService4, 0, hello, null)
+2020-08-03 14:00:35.625  INFO 57377 --- [nio-8080-exec-2] c.b.b.service.RabbitSenderService        : Message expiration：0
+2020-08-03 14:00:35.648  INFO 57377 --- [ntContainer#0-5] c.b.b.test.service.ApplicationService4   : confirmOuterService()
+2020-08-03 14:00:35.648  INFO 57377 --- [ntContainer#0-5] c.b.b.test.service.TestOuterService      : TestOuterService.confirmTimeoutAndReturn(false)
+2020-08-03 14:00:35.652  INFO 57377 --- [ 127.0.0.1:5672] c.b.b.config.RabbitmqConfig              : 消息发送成功:correlationData(null),ack(true),cause(null)
+2020-08-03 14:00:38.654  INFO 57377 --- [ntContainer#0-5] c.b.b.service.RabbitSenderService        : sendTTLExpireMsg(1, applicationService4, 1, hello, null)
+2020-08-03 14:00:38.654  INFO 57377 --- [ntContainer#0-5] c.b.b.service.RabbitSenderService        : Message expiration：2000
+2020-08-03 14:00:38.666  INFO 57377 --- [ 127.0.0.1:5672] c.b.b.config.RabbitmqConfig              : 消息发送成功:correlationData(null),ack(true),cause(null)
+2020-08-03 14:00:40.703  INFO 57377 --- [ntContainer#0-1] c.b.b.test.service.ApplicationService4   : confirmOuterService()
+2020-08-03 14:00:40.704  INFO 57377 --- [ntContainer#0-1] c.b.b.test.service.TestOuterService      : TestOuterService.confirmTimeoutAndReturn(false)
+2020-08-03 14:00:43.709  INFO 57377 --- [ntContainer#0-1] c.b.b.service.RabbitSenderService        : sendTTLExpireMsg(1, applicationService4, 2, hello, null)
+2020-08-03 14:00:43.710  INFO 57377 --- [ntContainer#0-1] c.b.b.service.RabbitSenderService        : Message expiration：4000
+2020-08-03 14:00:43.721  INFO 57377 --- [ 127.0.0.1:5672] c.b.b.config.RabbitmqConfig              : 消息发送成功:correlationData(null),ack(true),cause(null)
+2020-08-03 14:00:47.751  INFO 57377 --- [ntContainer#0-3] c.b.b.test.service.ApplicationService4   : confirmOuterService()
+2020-08-03 14:00:47.751  INFO 57377 --- [ntContainer#0-3] c.b.b.test.service.TestOuterService      : TestOuterService.confirmTimeoutAndReturn(false)
+2020-08-03 14:00:50.751  INFO 57377 --- [ntContainer#0-3] c.b.b.test.service.ApplicationService4   : cancelInnerService1()
+2020-08-03 14:00:50.752  INFO 57377 --- [ntContainer#0-3] c.b.b.test.service.TestInnerService1     : TestInnerService1.cancel()
+```
