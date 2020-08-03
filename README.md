@@ -11,11 +11,11 @@ Biz-Transaction分布式事务中间件采用方案是：
 
 * 对事务处理核心服务采用抽象模板类封装的方式，每种抽象模板只针对一种特定的分布式事务场景；
 * 抽象模板类把特定的分布式事务涉及的处理分支统一封装，服务只要继承抽象模板类，实现约定的分支方法即可，实现一个服务处理逻辑的高聚合；
-* 抽象模板类统一封装了具体的分布式事务处理逻辑，服务开发者只需专注于服务实现，无需关注分布式处理逻辑。
+* 抽象模板类统一封装了具体的分布式事务处理逻辑，服务开发者只需专注于服务实现，无需关注内在复杂的分布式处理逻辑。
 
 ## 安装
 
-### 容器中安装RabbitMQ
+### 容器中安装并运行RabbitMQ
 1. 运行：docker pull rabbitmq
 2. 运行：docker run -d --name rabbitmq -e RABBITMQ_DEFAULT_USER=guest -e RABBITMQ_DEFAULT_PASS=guest -p 15672:15672 -p 5672:5672 rabbitmq:management
 3. 下载“rabbitmq_delayed_message_exchange-3.8.0.ez”文件
