@@ -1,12 +1,12 @@
 spring:
   application:
-    name: test-common-spring-boot-starter
+    name: test-biz-transaction-starter
   rabbitmq:
     virtual-host: /
     host: 127.0.0.1
     port: 5672
-    username: springcloud
-    password: springcloud
+    username: guest
+    password: guest
     listener:
       simple:
         concurrency: 5
