@@ -14,7 +14,15 @@ Biz-Transaction分布式事务中间件采用方案是：
 * 抽象模板类统一封装了具体的分布式事务处理逻辑，服务开发者只需专注于服务实现，无需关注分布式处理逻辑。
 
 ## 安装
-### 安装RabbitMQ
+
+### 容器中安装RabbitMQ
+1. 运行：docker pull rabbitmq
+2. 运行：docker run -d --name rabbitmq -e RABBITMQ_DEFAULT_USER=guest -e RABBITMQ_DEFAULT_PASS=guest -p 15672:15672 -p 5672:5672 rabbitmq:management
+3. 下载“rabbitmq_delayed_message_exchange-3.8.0.ez”文件
+3. 将下载文件拷贝到容器指定目录下：docker cp rabbitmq_delayed_message_exchange-3.8.0.ez rabbitmq:/plugins
+4. 进行容器bash环境：docker exec -it <容器ID> bash
+5. 在容器bash环境中运行：rabbitmq-plugins enable rabbitmq_delayed_message_exchange
+
 ### 运行测试应用
 1. 从[BizTransaction](https://github.com/szhengye/BizTransaction)中下载项目源码；
 2. 在Eclipse或IDEA中作为MAVEN项目导入；
