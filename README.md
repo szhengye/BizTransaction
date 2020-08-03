@@ -30,7 +30,7 @@ Biz-Transaction分布式事务中间件采用方案是：
 4. 运行```src/com/bizmda/biztransaction/TransactionMqCenterApp.java```；
 
 ### 运行测试案例
-1. 访问"http://127.0.0.1:8080/app1"，响应"doInnerService1->doOuterService(true)->doInnerService2"，后台运行日志：
+1. 访问"`http://127.0.0.1:8080/app1`"，响应"doInnerService1->doOuterService(true)->doInnerService2"，后台运行日志：
 ```
 2020-08-03 13:47:09.288  INFO 57377 --- [nio-8080-exec-1] c.b.b.test.controller.TestController     : doInnerService1->doOuterService(true)->doInnerService2
 2020-08-03 13:47:09.289  INFO 57377 --- [nio-8080-exec-1] c.b.b.test.service.ApplicationService1   : doInnerService1()
