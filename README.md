@@ -33,7 +33,7 @@ Biz-Transaction分布式事务中间件采用方案是：
 
 1. 访问"`http://127.0.0.1:8080/app1`"
 
-![alt aaabbb] (https://cdn.nlark.com/yuque/__puml/96a043e2a75a320a37a822fb9ec77b65.svg)
+![avatar](https://cdn.nlark.com/yuque/__puml/96a043e2a75a320a37a822fb9ec77b65.svg)
 
 浏览器响应：
 ```
