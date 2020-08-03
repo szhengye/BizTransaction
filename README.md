@@ -52,6 +52,8 @@ doInnerService1->doOuterService(true)->doInnerService2
 
 2. 访问"`http://127.0.0.1:8080/app2`"
 
+![avatar](https://cdn.nlark.com/yuque/__puml/a83cc561f4f99140c9255ae5ace0d8be.svg)
+
 浏览器响应：
 ```
 doInnerService1->doOuterService(false)->cancelInnerService1
@@ -67,6 +69,8 @@ doInnerService1->doOuterService(false)->cancelInnerService1
 ```
 
 3. 访问"`http://127.0.0.1:8080/app3`"
+
+![avatar](https://cdn.nlark.com/yuque/__puml/adb3a48fddeb158c56ae182f84beb555.svg)
 
 浏览器响应：
 ```
@@ -102,6 +106,8 @@ doInnerService1->doOuterService(timeout)->confirmOuterService(true)->doInnerServ
 ```
 
 4. 访问"`http://127.0.0.1:8080/app4`"
+
+![avatar](https://cdn.nlark.com/yuque/__puml/a3ba11002ac94b1fcb7617c06f34ab58.svg)
 
 浏览器响应：
 ```
