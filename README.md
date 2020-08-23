@@ -1,6 +1,11 @@
-# Biz-Transaction分布式事务中间件
+# Biz-Transaction业务交易中间件
 
-Biz-Transaction是一个简单易用的分布式事务中间件，主要保证多个服务之间的分布式事务完整性。
+Biz-Transaction是一个简单易用的业务交易中间件，主要是对业务交易系统常见的交易处理类型进行规范化、模板化处理。
+主要支持的交易处理类型有：
+1. AbstractTransaction1：涉及一个第三方服务的交易处理类型，在第三方服务超时后，采用重试查询和向前补偿的机制，来保证整个分布式事务。
+2. AbstractTransaction2：涉及第三方服务异步返回的交易处理类型，实现第三方异步调用前和异步回调的统一处理。
+## 一、AbstractTransaction1（涉及一个第三方服务的分布式事务交易模板）
+AbstractTransaction1交易模板，主要保证多个服务之间的分布式事务完整性。
 相比其它的分布式事务中间件，具有更简单易用的特点，并能满足多种类型服务之间组装后的事务完整性保障：
 * TCC事务中间件：只有简单的Try、Confirm、Cancel机制，对于Confirm重试机制无法灵活使用。
 * Seata中间件：Seata有AT、MT和Saga三种处理机制，AT采用无痕数据库事务回滚的机制，简单粗暴，但没有事务痕迹是个硬伤；MT模式类似于TCC模式，灵活性较差；Saga模式通过状态图的方式来驱动事务流程，但配置复杂、开发复杂是影响广泛使用的原因。
@@ -13,12 +18,12 @@ Biz-Transaction分布式事务中间件采用方案是：
 * 抽象模板类把特定的分布式事务涉及的处理分支统一封装，服务只要继承抽象模板类，实现约定的分支方法即可，实现一个服务处理逻辑的高聚合；
 * 抽象模板类统一封装了具体的分布式事务处理逻辑，服务开发者只需专注于服务实现，无需关注内在复杂的分布式处理逻辑。
 
-## 运行机制
+### 运行机制
 
 Biz-Transaction在设计架构上可以同时支持多种分布式事务模式，目前只简单实现了最常用的“in-out-in事务模式"，后续可以在些框架上扩充其它类型的分布式事务模式。
 
 
-### in-out-in事务模式
+#### in-out-in事务模式
 
 in-out-in事务模式是一种比较常见的整合单个外部第三方应用的事务模式，事务处理流程是：
 1. 调用内部系统的服务：由内部系统提供的服务，一般是调用外部第三方应用前需要做的前置处理。
@@ -39,9 +44,9 @@ public abstract boolean confirmOuterService(Object msg) throws TransactionTimeOu
 public abstract void cancelInnerService1(Object msg);
 ```
 
-## 安装
+### 安装
 
-### 容器中安装并启动RabbitMQ
+#### 容器中安装并启动RabbitMQ
 1. 运行：docker pull rabbitmq
 2. 运行：docker run -d --name rabbitmq -e RABBITMQ_DEFAULT_USER=guest -e RABBITMQ_DEFAULT_PASS=guest -p 15672:15672 -p 5672:5672 rabbitmq:management
 3. 下载“rabbitmq_delayed_message_exchange-3.8.0.ez”文件
@@ -49,13 +54,13 @@ public abstract void cancelInnerService1(Object msg);
 4. 进行容器bash环境：docker exec -it <容器ID> bash
 5. 在容器bash环境中运行：rabbitmq-plugins enable rabbitmq_delayed_message_exchange
 
-### 启动测试应用
+#### 启动测试应用
 1. 从[BizTransaction](https://github.com/szhengye/BizTransaction)中下载项目源码；
 2. 在Eclipse或IDEA中作为MAVEN项目导入；
 3. 设置```biz-transaction-test/src/main/resources/application.yml```中的RabbitMQ的地址、用户名和密码：
 4. 运行```src/com/bizmda/biztransaction/TransactionMqCenterApp.java```；
 
-### 运行测试案例
+#### 运行测试案例
 
 1. 访问"`http://127.0.0.1:8080/app1`"
 
