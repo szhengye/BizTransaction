@@ -30,4 +30,9 @@ public class ApplicationService5 extends AbstractTransaction2 {
         log.info("doServiceAfterAsync({})", inParams);
         return null;
     }
+
+    @Override
+    public void callbackTimeout() throws Transaction2Exception {
+
+    }
 }

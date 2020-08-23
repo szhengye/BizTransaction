@@ -58,4 +58,5 @@ public abstract class AbstractTransaction2 implements BeanNameAware {
 
     public abstract Object doServiceBeforeAsync(Object inParams) throws Transaction2Exception;
     public abstract Object doServiceAfterAsync(Object inParams) throws Transaction2Exception;
+    public abstract void callbackTimeout() throws Transaction2Exception;
 }
