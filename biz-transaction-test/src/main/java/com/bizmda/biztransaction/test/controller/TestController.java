@@ -1,10 +1,8 @@
 package com.bizmda.biztransaction.test.controller;
 
 import com.bizmda.biztransaction.exception.Transaction1Exception;
-import com.bizmda.biztransaction.test.service.ApplicationService1;
-import com.bizmda.biztransaction.test.service.ApplicationService2;
-import com.bizmda.biztransaction.test.service.ApplicationService3;
-import com.bizmda.biztransaction.test.service.ApplicationService4;
+import com.bizmda.biztransaction.exception.Transaction2Exception;
+import com.bizmda.biztransaction.test.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +19,8 @@ public class TestController {
 	private ApplicationService3 applicationService3 ;
 	@Autowired
 	private ApplicationService4 applicationService4 ;
+	@Autowired
+	private ApplicationService5 applicationService5 ;
 
 	@GetMapping("/app1")
 	public String applicationService1 (){
@@ -61,6 +61,17 @@ public class TestController {
 		try {
 			applicationService4.doService("hello");
 		} catch (Transaction1Exception e) {
+			e.printStackTrace();
+		}
+		return "doInnerService1->doOuterService(timeout)->confirmOuterService(false)->cancelInnerService1";
+	}
+
+	@GetMapping("/app5")
+	public String applicationService5 (){
+		log.info("doInnerService1->doOuterService(timeout)->confirmOuterService(false)->cancelInnerService1");
+		try {
+			applicationService5.doServiceBeforeAsync("hello");
+		} catch (Transaction2Exception e) {
 			e.printStackTrace();
 		}
 		return "doInnerService1->doOuterService(timeout)->confirmOuterService(false)->cancelInnerService1";

@@ -1,6 +1,8 @@
 package com.bizmda.biztransaction.test.service;
 
+import com.bizmda.biztransaction.exception.Transaction2Exception;
 import com.bizmda.biztransaction.exception.TransactionTimeOutException;
+import com.bizmda.biztransaction.service.AbstractTransaction2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,29 @@ public class TestOuterService {
             e.printStackTrace();
         }
         return result;
+    }
+
+    public Object processAsync(Object inParams) {
+        log.info("processAsync()");
+        String transactionKey = (String)inParams;
+        Thread thread=new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(5000);
+                    try {
+                        AbstractTransaction2.callback("TestOuterService", transactionKey, "TestOuterService.processAsync() return object");
+                    } catch (Transaction2Exception e) {
+                        e.printStackTrace();
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        thread.start();
+        return "Return by TestOuterService.processAsync() !";
     }
 
     public void processWithTimeout() throws TransactionTimeOutException {

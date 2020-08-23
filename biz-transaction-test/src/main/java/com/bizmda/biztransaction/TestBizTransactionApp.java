@@ -16,11 +16,11 @@ import org.springframework.context.annotation.Configuration;
  
 @Configuration
 @SpringBootApplication
-public class TransactionMqCenterApp {
+public class TestBizTransactionApp {
 	
 	public static void main(String[] args) {
 //		固定端口启动
-		ApplicationContext context = SpringApplication.run(TransactionMqCenterApp.class, args);
+		ApplicationContext context = SpringApplication.run(TestBizTransactionApp.class, args);
 
 		SpringContextsUtil springContextsUtil = new SpringContextsUtil();
 		springContextsUtil.setApplicationContext(context);

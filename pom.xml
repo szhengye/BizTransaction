@@ -10,6 +10,7 @@
         <module>biz-transaction-common</module>
         <!-- BizTransaction测试模块 -->
         <module>biz-transaction-test</module>
+        <module>biz-transaction-starter</module>
     </modules>
 
     <properties>
