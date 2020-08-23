@@ -23,28 +23,29 @@ public class ApplicationService4 extends AbstractTransaction1 {
     }
 
     @Override
-    public boolean doOuterService(Object msg) throws TransactionTimeOutException {
+    public boolean doOuterService() throws TransactionTimeOutException {
         log.info("doOuterService()");
         testOuterService.processWithTimeout();
         return true;
     }
 
     @Override
-    public void doInnerService2(Object msg) {
+    public Object doInnerService2() {
         log.info("doInnerService2()");
 
         testInnerService2.process();
+        return null;
     }
 
     @Override
-    public boolean confirmOuterService(Object msg) throws TransactionTimeOutException {
+    public boolean confirmOuterService() throws TransactionTimeOutException {
         log.info("confirmOuterService()");
 
         return testOuterService.confirmTimeoutAndReturn(false);
     }
 
     @Override
-    public void cancelInnerService1(Object msg) {
+    public void cancelInnerService1() {
         log.info("cancelInnerService1()");
         testInnerService1.cancel();
     }

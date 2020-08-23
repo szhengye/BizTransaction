@@ -1,5 +1,6 @@
 package com.bizmda.biztransaction.test.controller;
 
+import com.bizmda.biztransaction.exception.Transaction1Exception;
 import com.bizmda.biztransaction.test.service.ApplicationService1;
 import com.bizmda.biztransaction.test.service.ApplicationService2;
 import com.bizmda.biztransaction.test.service.ApplicationService3;
@@ -24,28 +25,44 @@ public class TestController {
 	@GetMapping("/app1")
 	public String applicationService1 (){
 		log.info("doInnerService1->doOuterService(true)->doInnerService2");
-		applicationService1.doService("hello");
+		try {
+			applicationService1.doService("hello");
+		} catch (Transaction1Exception e) {
+			e.printStackTrace();
+		}
 		return "doInnerService1->doOuterService(true)->doInnerService2";
 	}
 
 	@GetMapping("/app2")
 	public String applicationService2 (){
 		log.info("doInnerService1->doOuterService(false)->cancelInnerService1");
-		applicationService2.doService("hello");
+		try {
+			applicationService2.doService("hello");
+		} catch (Transaction1Exception e) {
+			e.printStackTrace();
+		}
 		return "doInnerService1->doOuterService(false)->cancelInnerService1";
 	}
 
 	@GetMapping("/app3")
 	public String applicationService3 (){
 		log.info("doInnerService1->doOuterService(timeout)->confirmOuterService(true)->doInnerService2");
-		applicationService3.doService("hello");
+		try {
+			applicationService3.doService("hello");
+		} catch (Transaction1Exception e) {
+			log.info("applicationService3.doService() error code:{}",e.getCode());
+		}
 		return "doInnerService1->doOuterService(timeout)->confirmOuterService(true)->doInnerService2";
 	}
 
 	@GetMapping("/app4")
 	public String applicationService4 (){
 		log.info("doInnerService1->doOuterService(timeout)->confirmOuterService(false)->cancelInnerService1");
-		applicationService4.doService("hello");
+		try {
+			applicationService4.doService("hello");
+		} catch (Transaction1Exception e) {
+			e.printStackTrace();
+		}
 		return "doInnerService1->doOuterService(timeout)->confirmOuterService(false)->cancelInnerService1";
 	}
 }
