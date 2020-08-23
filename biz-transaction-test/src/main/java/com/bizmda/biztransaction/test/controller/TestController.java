@@ -30,7 +30,7 @@ public class TestController {
 		} catch (Transaction1Exception e) {
 			e.printStackTrace();
 		}
-		return "doInnerService1->doOuterService(true)->doInnerService2";
+		return "ApplicationService1.doInnerService1->doOuterService(true)->doInnerService2";
 	}
 
 	@GetMapping("/app2")
@@ -41,7 +41,7 @@ public class TestController {
 		} catch (Transaction1Exception e) {
 			e.printStackTrace();
 		}
-		return "doInnerService1->doOuterService(false)->cancelInnerService1";
+		return "ApplicationService2.doInnerService1->doOuterService(false)->cancelInnerService1";
 	}
 
 	@GetMapping("/app3")
@@ -52,7 +52,7 @@ public class TestController {
 		} catch (Transaction1Exception e) {
 			log.info("applicationService3.doService() error code:{}",e.getCode());
 		}
-		return "doInnerService1->doOuterService(timeout)->confirmOuterService(true)->doInnerService2";
+		return "ApplicationService3.doInnerService1->doOuterService(timeout)->confirmOuterService(true)->doInnerService2";
 	}
 
 	@GetMapping("/app4")
@@ -63,7 +63,7 @@ public class TestController {
 		} catch (Transaction1Exception e) {
 			e.printStackTrace();
 		}
-		return "doInnerService1->doOuterService(timeout)->confirmOuterService(false)->cancelInnerService1";
+		return "ApplicationService4.doInnerService1->doOuterService(timeout)->confirmOuterService(false)->cancelInnerService1";
 	}
 
 	@GetMapping("/app5")
@@ -74,6 +74,6 @@ public class TestController {
 		} catch (Transaction2Exception e) {
 			e.printStackTrace();
 		}
-		return "doInnerService1->doOuterService(timeout)->confirmOuterService(false)->cancelInnerService1";
+		return "ApplicationService5.doServiceBeforeAsync->TestOuterService.processAsync() * * *> AbstractTransaction2.callback()->ApplicationService5.doServiceAfterAsync()";
 	}
 }
