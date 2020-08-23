@@ -19,6 +19,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <spring-boot.version>2.1.15.RELEASE</spring-boot.version>
+        <hutool.version>5.1.0</hutool.version>
     </properties>
 
 

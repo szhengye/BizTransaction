@@ -1,15 +1,25 @@
 package com.bizmda.biztransaction.service;
 
+import com.bizmda.biztransaction.exception.Transaction1Exception;
 import com.bizmda.biztransaction.exception.TransactionMaxConfirmFailException;
 import com.bizmda.biztransaction.exception.TransactionTimeOutException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Map;
-
+@Slf4j
 public abstract class AbstractTransaction1 implements BeanNameAware {
-    private Map transactionContext;
+//    private Map transactionContext;
+
+    private int confirmStep;
+
+    public int getConfirmStep() {
+        return confirmStep;
+    }
+
+    public void setConfirmStep(int confirmStep) {
+        this.confirmStep = confirmStep;
+    }
 
     @Autowired
     private RabbitSenderService rabbitSenderService ;
@@ -21,32 +31,43 @@ public abstract class AbstractTransaction1 implements BeanNameAware {
         this.beanName = name;
     }
 
-    @Transactional
-    public void doService(Object msg) {
-        this.doInnerService1(msg);
+    public String getBeanName() {
+        return beanName;
+    }
+
+    public Object doService(Object inParams) throws Transaction1Exception {
+        this.confirmStep = 1;
+        this.doInnerService1(inParams);
         try {
-            if (this.doOuterService(msg)) {
-                this.doInnerService2(msg);
+            if (this.doOuterService()) {
+                return this.doInnerService2();
             }
             else {
-                this.cancelInnerService1(msg);
+                this.cancelInnerService1();
+                throw new Transaction1Exception(Transaction1Exception.CANCEL_SERVICE_EXCEPTION_CODE);
             }
         } catch (TransactionTimeOutException e) {
             try {
-                rabbitSenderService.sendTTLExpireMsg(1, this.beanName, 0, msg, this.transactionContext);
+                rabbitSenderService.sendOuterServiceConfirmMsg(this);
             } catch (TransactionMaxConfirmFailException transactionMaxConfirmFailException) {
                 transactionMaxConfirmFailException.printStackTrace();
+                throw new Transaction1Exception(Transaction1Exception.MAX_CONFIRM_EXCEPTION_CODE,e);
             }
+            throw new Transaction1Exception(Transaction1Exception.OUTER_SERVICE_TIMEOUT_EXCEPTION_CODE,e);
         }
     }
 
-    public void setTransactionContext(Map transactionContext) {
-        this.transactionContext = transactionContext;
-    }
+//    public void setTransactionContext(Map transactionContext) {
+//        this.transactionContext = transactionContext;
+//    }
 
     public abstract void doInnerService1(Object msg);
-    public abstract boolean doOuterService(Object msg) throws TransactionTimeOutException;
-    public abstract void doInnerService2(Object msg);
-    public abstract boolean confirmOuterService(Object msg) throws TransactionTimeOutException;
-    public abstract void cancelInnerService1(Object msg);
+    public abstract boolean doOuterService() throws TransactionTimeOutException;
+    public abstract Object doInnerService2();
+    public abstract boolean confirmOuterService() throws TransactionTimeOutException;
+    public abstract void cancelInnerService1();
+
+    public void abortTransaction(Throwable e) {
+        log.info("abortTransaction:{}",e.getMessage());
+    }
 }
