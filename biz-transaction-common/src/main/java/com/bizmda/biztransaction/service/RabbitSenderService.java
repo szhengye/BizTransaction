@@ -29,41 +29,10 @@ public class RabbitSenderService {
 
     private static String[] expirationArray = {"0","2000","4000","8000","16000","32000","64000"};
 
-    public void sendOuterServiceConfirmMsg(AbstractTransaction1 transactionBean) throws TransactionMaxConfirmFailException {
-
-        if (transactionBean.getConfirmStep() >= RabbitSenderService.expirationArray.length - 1) {
-            throw new TransactionMaxConfirmFailException();
-        }
-//        Map map = Maps.newHashMap();
-//        map.put("type",String.valueOf(type));
-//        map.put("beanName", beanName);
-//        map.put("no", String.valueOf(no));
-//        map.put("msg", msg);
-//        map.put("transactionBean", transactionBean);
-        log.info("***transactionBean:{}",transactionBean.getClass().getName());
-        rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
-        rabbitTemplate.setExchange("dead.prod.exchange");
-        rabbitTemplate.setRoutingKey("dead.prod.routing.key");
-        rabbitTemplate.convertAndSend(transactionBean, new MessagePostProcessor() {
-            @Override
-            public Message postProcessMessage(Message message) throws AmqpException {
-                MessageProperties mp = message.getMessageProperties();
-                mp.setDeliveryMode(MessageDeliveryMode.PERSISTENT);
-//                mp.setHeader(AbstractJavaTypeMapper.DEFAULT_CONTENT_CLASSID_FIELD_NAME, Map.class);
-
-                //动态设置TTL
-                mp.setExpiration(RabbitSenderService.expirationArray[transactionBean.getConfirmStep() - 1]);
-                return message;
-            }
-        });
-        log.info("sendTTLExpireMsg({})",transactionBean);
-        log.info("Message expiration：" + RabbitSenderService.expirationArray[transactionBean.getConfirmStep() - 1]);
-
-    }
     /**
      * 发送信息入死信队列
      */
-    public void sendTTLExpireMsg(int type, String beanName, int no, Object msg, Object transactionBean) throws TransactionMaxConfirmFailException {
+    public void sendTTLExpireMsg(int type, String beanName, int no, Object msg, Map context) throws TransactionMaxConfirmFailException {
 
         if (no >= RabbitSenderService.expirationArray.length - 2) {
             throw new TransactionMaxConfirmFailException();
@@ -73,8 +42,7 @@ public class RabbitSenderService {
         map.put("beanName", beanName);
         map.put("no", String.valueOf(no));
         map.put("msg", msg);
-        map.put("transactionBean", transactionBean);
-        log.info("***transactionBean:{}",transactionBean.getClass().getName());
+        map.put("context", context);
         rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
         rabbitTemplate.setExchange("dead.prod.exchange");
         rabbitTemplate.setRoutingKey("dead.prod.routing.key");
@@ -90,7 +58,7 @@ public class RabbitSenderService {
                 return message;
             }
         });
-        log.info("sendTTLExpireMsg({}, {}, {}, {}, {})",type, beanName, no, msg, transactionBean);
+        log.info("sendTTLExpireMsg({}, {}, {}, {}, {})",type, beanName, no, msg, context);
         log.info("Message expiration：" + RabbitSenderService.expirationArray[no]);
 
     }
