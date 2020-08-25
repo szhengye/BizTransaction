@@ -37,7 +37,7 @@ public abstract class AbstractTransaction2 implements BeanNameAware {
     }
 
     public Object doService(Object inParams) throws Transaction2Exception {
-        this.doServiceBeforeAsync(inParams);
+        return this.doServiceBeforeAsync(inParams);
     }
 
     public static void callback(String outerId, String transactionKey, Object inParams) throws Transaction2Exception {
