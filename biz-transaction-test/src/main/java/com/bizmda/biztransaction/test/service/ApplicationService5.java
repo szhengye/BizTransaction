@@ -16,7 +16,7 @@ public class ApplicationService5 extends AbstractTransaction2 {
     private TestOuterService testOuterService ;
 
     @Override
-    public Object doServiceBeforeAsync(Object inParams) throws Transaction2Exception {
+    public Object doService(Object inParams) throws Transaction2Exception {
         log.info("doServiceBeforeAsync({})", inParams);
         String transactionKey = String.valueOf(Clock.systemDefaultZone().millis());
         this.saveState("TestOuterService",transactionKey,10);

@@ -1,6 +1,7 @@
 package com.bizmda.biztransaction.service;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.bizmda.biztransaction.exception.Transaction1Exception;
 import com.bizmda.biztransaction.exception.Transaction2Exception;
 import com.open.capacity.redis.util.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +34,10 @@ public abstract class AbstractTransaction2 implements BeanNameAware {
 
     public String getBeanName() {
         return beanName;
+    }
+
+    public Object doService(Object inParams) throws Transaction2Exception {
+        this.doServiceBeforeAsync(inParams);
     }
 
     public static void callback(String outerId, String transactionKey, Object inParams) throws Transaction2Exception {
