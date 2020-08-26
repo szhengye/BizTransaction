@@ -60,11 +60,17 @@ public abstract class AbstractTransaction1 implements BeanNameAware {
 //        this.transactionContext = transactionContext;
 //    }
 
+    // 实现第1步内部服务的处理逻辑
     public abstract void doInnerService1(Object inParams);
+    // 实现第2步调用外部第三方应用的处理逻辑，如果响应超时，应抛出TransactionTimeoutException，Biz-Transaction会根据超时重试机制自动重发，具体实现是通过RabbitMQ的延迟队列来实现的。
     public abstract boolean doOuterService() throws TransactionTimeOutException;
+    // 实现第2步内部服务的处理逻辑
     public abstract Object doInnerService2();
+    // 实现第2步调用外部第三方应用超时无响应后，后续向第三方应用发起交易确认的处理逻辑，如果超时，应抛出TransactionTimeoutException，Biz-Transaction会根据超时重试机制自动重发，具体实现是通过RabbitMQ的延迟队列来实现的。
     public abstract boolean confirmOuterService() throws TransactionTimeOutException;
+    // 针对第1步内部服务的补偿服务处理逻辑。
     public abstract void cancelInnerService1();
+
     public void abortTransaction(Throwable e) {
         log.info("abortTransaction:{}",e.getMessage());
     }
