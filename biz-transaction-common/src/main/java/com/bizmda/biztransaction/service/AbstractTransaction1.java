@@ -10,15 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Slf4j
 public abstract class AbstractTransaction1 implements BeanNameAware {
 //    private Map transactionContext;
+    private int confirmTimes;
 
-    private int confirmStep;
-
-    public int getConfirmStep() {
-        return confirmStep;
+    public int getConfirmTimes() {
+        return confirmTimes;
     }
 
-    public void setConfirmStep(int confirmStep) {
-        this.confirmStep = confirmStep;
+    public void setConfirmTimes(int confirmTimes) {
+        this.confirmTimes = confirmTimes;
     }
 
     @Autowired
@@ -36,7 +35,7 @@ public abstract class AbstractTransaction1 implements BeanNameAware {
     }
 
     public Object doService(Object inParams) throws Transaction1Exception {
-        this.confirmStep = 1;
+        this.confirmTimes = 0;
         this.doInnerService1(inParams);
         try {
             if (this.doOuterService()) {
@@ -61,12 +60,11 @@ public abstract class AbstractTransaction1 implements BeanNameAware {
 //        this.transactionContext = transactionContext;
 //    }
 
-    public abstract void doInnerService1(Object msg);
+    public abstract void doInnerService1(Object inParams);
     public abstract boolean doOuterService() throws TransactionTimeOutException;
     public abstract Object doInnerService2();
     public abstract boolean confirmOuterService() throws TransactionTimeOutException;
     public abstract void cancelInnerService1();
-
     public void abortTransaction(Throwable e) {
         log.info("abortTransaction:{}",e.getMessage());
     }
