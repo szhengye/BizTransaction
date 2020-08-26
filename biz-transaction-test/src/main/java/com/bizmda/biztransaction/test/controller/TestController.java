@@ -70,7 +70,7 @@ public class TestController {
 	public String applicationService5 (){
 		log.info("doInnerService1->doOuterService(timeout)->confirmOuterService(false)->cancelInnerService1");
 		try {
-			applicationService5.doServiceBeforeAsync("hello");
+			applicationService5.doService("hello");
 		} catch (Transaction2Exception e) {
 			e.printStackTrace();
 		}
