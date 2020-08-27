@@ -40,6 +40,7 @@ public abstract class AbstractTransaction2 implements BeanNameAware {
         return this.doServiceBeforeAsync(inParams);
     }
 
+    // 外部服务异步回调后，应由开发者主动调用的方法，以触发回调后的业务逻辑
     public static void callback(String outerId, String transactionKey, Object inParams) throws Transaction2Exception {
         String key = "biz:transaction2:" + outerId + ":" + transactionKey;
         AbstractTransaction2 transaction2Redis = (AbstractTransaction2)AbstractTransaction2.staticRedisUtil.get(key);
@@ -56,12 +57,16 @@ public abstract class AbstractTransaction2 implements BeanNameAware {
         log.info("abortTransaction:{}",e.getMessage());
     }
 
+    // 在调用外部异步服务前，主动保存交易状态，一般在doServiceBeforeAsync()方法束时应执行，强烈建议在调用用外部通讯前执行。
     public void saveState(String outerId, String transactionKey, long expiredTime) {
         String key = "biz:transaction2:" + outerId + ":" + transactionKey;
         this.redisUtil.set(key, this, expiredTime);
     }
 
+    // 实现调用外部异步服务之前的业务逻辑
     public abstract Object doServiceBeforeAsync(Object inParams) throws Transaction2Exception;
+    // 实现外部异步服务回调后的业务逻辑
     public abstract Object doServiceAfterAsync(Object inParams) throws Transaction2Exception;
+    // 外部异步服务在约定的时间内没有发生回调操作，触发的业务逻辑
     public abstract void callbackTimeout() throws Transaction2Exception;
 }
