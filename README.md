@@ -32,17 +32,18 @@ in-out-in事务模式是一种比较常见的整合单个外部第三方应用�
 
 in-out-in事务模式，在编码实现时是继承com.bizmda.biztransaction.service.AbstractTransaction1抽象类，实现其中的5个方法即可：
 ```java
-// 实现第1步内部服务的处理逻辑
-public abstract void doInnerService1(Object msg);
-// 实现第2步调用外部第三方应用的处理逻辑，如果响应超时，应抛出TransactionTimeoutException，Biz-Transaction会根据超时重试机制自动重发，具体实现是通过RabbitMQ的延迟队列来实现的。
-public abstract boolean doOuterService(Object msg) throws TransactionTimeOutException;
-// 实现第2步内部服务的处理逻辑
-public abstract void doInnerService2(Object msg);
-// 实现第2步调用外部第三方应用超时无响应后，后续向第三方应用发起交易确认的处理逻辑，如果超时，应抛出TransactionTimeoutException，Biz-Transaction会根据超时重试机制自动重发，具体实现是通过RabbitMQ的延迟队列来实现的。
-public abstract boolean confirmOuterService(Object msg) throws TransactionTimeOutException;
-// 针对第1步内部服务的补偿服务处理逻辑。
-public abstract void cancelInnerService1(Object msg);
+    // 实现第1步内部服务的处理逻辑
+    public abstract void doInnerService1(Object inParams);
+    // 实现第2步调用外部第三方应用的处理逻辑，如果响应超时，应抛出TransactionTimeoutException，Biz-Transaction会根据超时重试机制自动重发，具体实现是通过RabbitMQ的延迟队列来实现的。
+    public abstract boolean doOuterService() throws TransactionTimeOutException;
+    // 实现第2步内部服务的处理逻辑
+    public abstract Object doInnerService2();
+    // 实现第2步调用外部第三方应用超时无响应后，后续向第三方应用发起交易确认的处理逻辑，如果超时，应抛出TransactionTimeoutException，Biz-Transaction会根据超时重试机制自动重发，具体实现是通过RabbitMQ的延迟队列来实现的。
+    public abstract boolean confirmOuterService() throws TransactionTimeOutException;
+    // 针对第1步内部服务的补偿服务处理逻辑。
+    public abstract void cancelInnerService1();
 ```
+![avatar](https://www.processon.com/chart_image/id/5f445d86e401fd5f24858786.png)
 
 ### 安装
 
