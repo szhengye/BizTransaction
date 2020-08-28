@@ -31,7 +31,7 @@ public class RabbitSenderService {
 
     public void sendOuterServiceConfirmMsg(AbstractTransaction1 transactionBean) throws TransactionMaxConfirmFailException {
 
-        if (transactionBean.getConfirmStep() >= RabbitSenderService.expirationArray.length - 1) {
+        if (transactionBean.getConfirmTimes() >= RabbitSenderService.expirationArray.length - 2) {
             throw new TransactionMaxConfirmFailException();
         }
 //        Map map = Maps.newHashMap();
@@ -52,12 +52,12 @@ public class RabbitSenderService {
 //                mp.setHeader(AbstractJavaTypeMapper.DEFAULT_CONTENT_CLASSID_FIELD_NAME, Map.class);
 
                 //动态设置TTL
-                mp.setExpiration(RabbitSenderService.expirationArray[transactionBean.getConfirmStep() - 1]);
+                mp.setExpiration(RabbitSenderService.expirationArray[transactionBean.getConfirmTimes()]);
                 return message;
             }
         });
         log.info("sendTTLExpireMsg({})",transactionBean);
-        log.info("Message expiration：" + RabbitSenderService.expirationArray[transactionBean.getConfirmStep() - 1]);
+        log.info("Message expiration：" + RabbitSenderService.expirationArray[transactionBean.getConfirmTimes()]);
 
     }
     /**

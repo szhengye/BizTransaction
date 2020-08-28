@@ -1,7 +1,6 @@
 package com.bizmda.biztransaction.service;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.bizmda.biztransaction.exception.Transaction1Exception;
 import com.bizmda.biztransaction.exception.TransactionMaxConfirmFailException;
 import com.bizmda.biztransaction.exception.TransactionTimeOutException;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +38,7 @@ public class RabbitReceiverService {
                 transaction1.cancelInnerService1();
             }
         } catch (TransactionTimeOutException e) {
-            transaction1.setConfirmStep(transaction1.getConfirmStep() + 1);
+            transaction1.setConfirmTimes(transaction1.getConfirmTimes() + 1);
             try {
                 rabbitSenderService.sendOuterServiceConfirmMsg(transaction1);
             } catch (TransactionMaxConfirmFailException transactionMaxConfirmFailException) {

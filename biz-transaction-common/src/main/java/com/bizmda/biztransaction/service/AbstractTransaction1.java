@@ -10,15 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Slf4j
 public abstract class AbstractTransaction1 implements BeanNameAware {
 //    private Map transactionContext;
+    private int confirmTimes;
 
-    private int confirmStep;
-
-    public int getConfirmStep() {
-        return confirmStep;
+    public int getConfirmTimes() {
+        return confirmTimes;
     }
 
-    public void setConfirmStep(int confirmStep) {
-        this.confirmStep = confirmStep;
+    public void setConfirmTimes(int confirmTimes) {
+        this.confirmTimes = confirmTimes;
     }
 
     @Autowired
@@ -36,7 +35,7 @@ public abstract class AbstractTransaction1 implements BeanNameAware {
     }
 
     public Object doService(Object inParams) throws Transaction1Exception {
-        this.confirmStep = 1;
+        this.confirmTimes = 0;
         this.doInnerService1(inParams);
         try {
             if (this.doOuterService()) {
@@ -62,7 +61,7 @@ public abstract class AbstractTransaction1 implements BeanNameAware {
 //    }
 
     // 实现第1步内部服务的处理逻辑
-    public abstract void doInnerService1(Object msg);
+    public abstract void doInnerService1(Object inParams);
     // 实现第2步调用外部第三方应用的处理逻辑，如果响应超时，应抛出TransactionTimeoutException，Biz-Transaction会根据超时重试机制自动重发，具体实现是通过RabbitMQ的延迟队列来实现的。
     public abstract boolean doOuterService() throws TransactionTimeOutException;
     // 实现第2步内部服务的处理逻辑
@@ -75,5 +74,4 @@ public abstract class AbstractTransaction1 implements BeanNameAware {
     public void abortTransaction(Throwable e) {
         log.info("abortTransaction:{}",e.getMessage());
     }
-
 }
