@@ -43,7 +43,6 @@ in-out-in事务模式，在编码实现时是继承com.bizmda.biztransaction.ser
     // 针对第1步内部服务的补偿服务处理逻辑。
     public abstract void cancelInnerService1();
 ```
-![avatar](https://www.processon.com/chart_image/id/5f445d86e401fd5f24858786.png)
 
 ### 安装
 
