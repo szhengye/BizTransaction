@@ -11,6 +11,7 @@
         <!-- BizTransaction测试模块 -->
         <module>biz-transaction-test</module>
         <module>biz-transaction-starter</module>
+        <module>biz-transaction-queueservice-listener</module>
     </modules>
 
     <properties>
@@ -74,9 +75,11 @@
                     <configuration>
                         <archive>
                             <addMavenDescriptor>false</addMavenDescriptor>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </archive>
                     </configuration>
                 </plugin>
+
             </plugins>
         </pluginManagement>
         <resources>

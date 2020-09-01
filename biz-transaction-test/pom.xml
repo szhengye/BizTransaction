@@ -9,8 +9,6 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>om.bizmda</groupId>
-
     <description>BizTransaction事务中间件测试</description>
     <artifactId>biz-transaction-test</artifactId>
 

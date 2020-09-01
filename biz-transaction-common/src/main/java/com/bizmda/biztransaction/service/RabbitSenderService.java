@@ -14,6 +14,9 @@ import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,24 +30,28 @@ public class RabbitSenderService {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
-    private static String[] expirationArray = {"0","2000","4000","8000","16000","32000","64000"};
+    public static String[] expirationArray = {"0","2000","4000","8000","16000","32000","64000"};
 
-    public void sendOuterServiceConfirmMsg(AbstractTransaction1 transactionBean) throws TransactionMaxConfirmFailException {
+    public void sendQueueService(String queueName,AbstractTransaction transactionBean, String methodName, List<String> parameterTypes,Object[] args) {
+        Map context = new HashMap();
+        context.put("transactionBean",transactionBean);
+        context.put("methodName",methodName);
+        context.put("parameterTypes",parameterTypes);
+        context.put("args",args);
+        rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
+        rabbitTemplate.convertAndSend(queueName,context);
+    }
 
-        if (transactionBean.getConfirmTimes() >= RabbitSenderService.expirationArray.length - 2) {
-            throw new TransactionMaxConfirmFailException();
-        }
-//        Map map = Maps.newHashMap();
-//        map.put("type",String.valueOf(type));
-//        map.put("beanName", beanName);
-//        map.put("no", String.valueOf(no));
-//        map.put("msg", msg);
-//        map.put("transactionBean", transactionBean);
-        log.info("***transactionBean:{}",transactionBean.getClass().getName());
+    public void sendSyncService(AbstractTransaction transactionBean, String confirmMethod, String commitMethod, String rollbackMethod) {
+        Map context = new HashMap();
+        context.put("transactionBean",transactionBean);
+        context.put("confirmMethod",confirmMethod);
+        context.put("commitMethod",commitMethod);
+        context.put("rollbackMethod",rollbackMethod);
         rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
         rabbitTemplate.setExchange("dead.prod.exchange");
         rabbitTemplate.setRoutingKey("dead.prod.routing.key");
-        rabbitTemplate.convertAndSend(transactionBean, new MessagePostProcessor() {
+        rabbitTemplate.convertAndSend(context, new MessagePostProcessor() {
             @Override
             public Message postProcessMessage(Message message) throws AmqpException {
                 MessageProperties mp = message.getMessageProperties();
@@ -56,10 +63,39 @@ public class RabbitSenderService {
                 return message;
             }
         });
-        log.info("sendTTLExpireMsg({})",transactionBean);
-        log.info("Message expiration：" + RabbitSenderService.expirationArray[transactionBean.getConfirmTimes()]);
-
     }
+
+//    public void sendOuterServiceConfirmMsg(AbstractTransaction1 transactionBean) throws TransactionMaxConfirmFailException {
+//
+//        if (transactionBean.getConfirmTimes() >= RabbitSenderService.expirationArray.length - 2) {
+//            throw new TransactionMaxConfirmFailException();
+//        }
+////        Map map = Maps.newHashMap();
+////        map.put("type",String.valueOf(type));
+////        map.put("beanName", beanName);
+////        map.put("no", String.valueOf(no));
+////        map.put("msg", msg);
+////        map.put("transactionBean", transactionBean);
+//        log.info("***transactionBean:{}",transactionBean.getClass().getName());
+//        rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
+//        rabbitTemplate.setExchange("dead.prod.exchange");
+//        rabbitTemplate.setRoutingKey("dead.prod.routing.key");
+//        rabbitTemplate.convertAndSend(transactionBean, new MessagePostProcessor() {
+//            @Override
+//            public Message postProcessMessage(Message message) throws AmqpException {
+//                MessageProperties mp = message.getMessageProperties();
+//                mp.setDeliveryMode(MessageDeliveryMode.PERSISTENT);
+////                mp.setHeader(AbstractJavaTypeMapper.DEFAULT_CONTENT_CLASSID_FIELD_NAME, Map.class);
+//
+//                //动态设置TTL
+//                mp.setExpiration(RabbitSenderService.expirationArray[transactionBean.getConfirmTimes()]);
+//                return message;
+//            }
+//        });
+//        log.info("sendTTLExpireMsg({})",transactionBean);
+//        log.info("Message expiration：" + RabbitSenderService.expirationArray[transactionBean.getConfirmTimes()]);
+//
+//    }
     /**
      * 发送信息入死信队列
      */

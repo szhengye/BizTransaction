@@ -91,11 +91,6 @@ public class RabbitmqConfig {
         return rabbitTemplate;
     }
 
- 
-
-
-    
-
     //基本交换机
     @Bean
     public TopicExchange deadProdExchange(){
@@ -124,7 +119,12 @@ public class RabbitmqConfig {
         //死信队列名称：dead.queue
         return new Queue("dead.queue",true,false,false,argsMap);
     }
-    
+
+    @Bean
+    public Queue QueueServiceQueue() {
+        return new Queue("queue.biztransaction.queueservice");
+    }
+
     //死信交换机
     @Bean
     public TopicExchange deadExchange(){

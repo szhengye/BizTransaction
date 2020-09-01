@@ -9,7 +9,7 @@ import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Slf4j
-public abstract class AbstractTransaction2 implements BeanNameAware {
+public abstract class AbstractTransaction2 extends AbstractTransaction {
     @Autowired
     private RedisUtil redisUtil ;
 
@@ -23,17 +23,6 @@ public abstract class AbstractTransaction2 implements BeanNameAware {
     @Autowired
     public void setStaticRedisUtil(RedisUtil staticRedisUtil){
         AbstractTransaction2.staticRedisUtil = staticRedisUtil;
-    }
-
-    // 保存部署该Bean时指定的id属性
-    private String beanName;
-    public void setBeanName(String name)
-    {
-        this.beanName = name;
-    }
-
-    public String getBeanName() {
-        return beanName;
     }
 
     public Object doService(Object inParams) throws Transaction2Exception {

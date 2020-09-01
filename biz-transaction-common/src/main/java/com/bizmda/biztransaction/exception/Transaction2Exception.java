@@ -1,25 +1,16 @@
 package com.bizmda.biztransaction.exception;
 
-public class Transaction2Exception extends  Exception {
+public class Transaction2Exception extends  TransactionException {
     public final static int NO_MATCH_TRANSACTION_EXCEPTION_CODE = 1;
+    public Transaction2Exception(int code) {
+        super(code);
+    }
 
-    private int code;
-
-    public Transaction2Exception(int code, String message, Throwable cause) {
-        super(message, cause);
-        this.code = code;
+    public Transaction2Exception(int code,String message, Throwable cause) {
+        super(code,message, cause);
     }
 
     public Transaction2Exception(int code, Throwable cause) {
-        super(cause);
-        this.code = code;
-    }
-
-    public Transaction2Exception(int code) {
-        this.code = code;
-    }
-
-    public int getCode() {
-        return code;
+        super(code,cause);
     }
 }
