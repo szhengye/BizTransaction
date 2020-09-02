@@ -1,7 +1,8 @@
 package com.bizmda.biztransaction.annotation;
 
+import com.bizmda.biztransaction.exception.TransactionTimeOutException;
 import com.bizmda.biztransaction.service.AbstractTransaction;
-import com.bizmda.biztransaction.service.RabbitSenderService;
+import com.bizmda.biztransaction.service.RabbitmqSenderService;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -10,6 +11,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,25 +21,34 @@ import java.util.List;
 public class SyncServiceAOP {
     public static ThreadLocal<Boolean> syncServiceListener = new ThreadLocal<Boolean>();
     @Autowired
-    private RabbitSenderService rabbitSenderService ;
+    private RabbitmqSenderService rabbitmqSenderService;
 
     @Around("@annotation(ds)")
-    public Object doQueueService(ProceedingJoinPoint joinPoint, QueueService ds) throws Throwable {
+    public Object doSyncService(ProceedingJoinPoint joinPoint, SyncService ds) throws Throwable {
+        log.info("sssss-1");
         if (SyncServiceAOP.syncServiceListener.get() != null) {
-            Object result = joinPoint.proceed();
-            return result;
-        }
-        MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
-        String methodName = methodSignature.getName();
-        Class[] classArray = methodSignature.getParameterTypes();
-        List<String> parameterTypes = new ArrayList<String>();
-        for(Class cls:classArray) {
-            parameterTypes.add(cls.getName());
+            Object[] args = joinPoint.getArgs();// 参数值
+            log.info("sssss-1");
+            try {
+                Object result = joinPoint.proceed(args);
+                return result;
+            } catch (Throwable e) {
+                log.info("ssssss0");
+                e.printStackTrace();
+            }
+//            } catch (InvocationTargetException e) {
+//                log.info("ssssss1");
+//                if (e.getTargetException().getClass().equals(TransactionTimeOutException.class)) {
+//                    log.info("ssssss2");
+//                    AbstractTransaction tranBean = (AbstractTransaction) joinPoint.getTarget();
+//                    rabbitmqSenderService.sendSyncService(tranBean, ds.confirmMethod(), ds.commitMethod(), ds.rollbackMethod());
+//                }
+//                throw e;
+//            }
         }
 
-        Object[] args = joinPoint.getArgs();// 参数值
-        AbstractTransaction tranBean = (AbstractTransaction)joinPoint.getTarget();
-        rabbitSenderService.sendQueueService(ds.queue(),tranBean,methodName,parameterTypes,args);
+        AbstractTransaction tranBean = (AbstractTransaction) joinPoint.getTarget();
+        rabbitmqSenderService.sendSyncService(tranBean, ds.confirmMethod(), ds.commitMethod(), ds.rollbackMethod());
         return null;
     }
 }

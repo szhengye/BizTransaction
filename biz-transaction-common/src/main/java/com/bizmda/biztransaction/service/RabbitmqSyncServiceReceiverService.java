@@ -1,9 +1,7 @@
 package com.bizmda.biztransaction.service;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.bizmda.biztransaction.annotation.QueueServiceAOP;
 import com.bizmda.biztransaction.annotation.SyncServiceAOP;
-import com.bizmda.biztransaction.exception.TransactionMaxConfirmFailException;
 import com.bizmda.biztransaction.exception.TransactionTimeOutException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -12,8 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,9 +17,9 @@ import java.util.Map;
  **/
 @Slf4j
 @Service
-public class RabbitReceiverService {
+public class RabbitmqSyncServiceReceiverService {
     @Autowired
-    private RabbitSenderService rabbitSenderService;
+    private RabbitmqSenderService rabbitmqSenderService;
 
     /**
      * ttl消息
@@ -62,7 +58,7 @@ public class RabbitReceiverService {
         AbstractTransaction transaction1 = (AbstractTransaction1) SpringContextsUtil.getBean(beanName, AbstractTransaction1.class);
         BeanUtil.copyProperties(map, transaction1);
         log.info("***receive:transactionBean:{},{}", transaction1.getClass().getName(), transaction1);
-        if (transaction1.getConfirmTimes() >= RabbitSenderService.expirationArray.length - 2) {
+        if (transaction1.getConfirmTimes() >= RabbitmqSenderService.expirationArray.length - 2) {
             transaction1.abortTransaction(new TransactionTimeOutException());
             return;
         }
@@ -82,7 +78,7 @@ public class RabbitReceiverService {
         } catch (InvocationTargetException e) {
             if (e.getTargetException().getClass().equals(TransactionTimeOutException.class)) {
                 transaction1.setConfirmTimes(transaction1.getConfirmTimes() + 1);
-                rabbitSenderService.sendSyncService(transaction1,confirmMethodName,commitMethodName,rollbackMethodName);
+                rabbitmqSenderService.sendSyncService(transaction1,confirmMethodName,commitMethodName,rollbackMethodName);
             }
             else {
                 e.printStackTrace();

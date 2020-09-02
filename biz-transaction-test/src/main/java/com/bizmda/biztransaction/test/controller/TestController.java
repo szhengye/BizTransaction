@@ -3,6 +3,8 @@ package com.bizmda.biztransaction.test.controller;
 import com.bizmda.biztransaction.annotation.QueueServiceAOP;
 import com.bizmda.biztransaction.exception.Transaction1Exception;
 import com.bizmda.biztransaction.exception.Transaction2Exception;
+import com.bizmda.biztransaction.exception.TransactionException;
+import com.bizmda.biztransaction.exception.TransactionTimeOutException;
 import com.bizmda.biztransaction.test.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,8 @@ public class TestController {
 	private ApplicationService5 applicationService5 ;
 	@Autowired
 	private ApplicationService6 applicationService6 ;
+	@Autowired
+	private ApplicationService7 applicationService7 ;
 
 	@GetMapping("/app1")
 	public String applicationService1 (){
@@ -84,9 +88,19 @@ public class TestController {
 
 	@GetMapping("/app6")
 	public String applicationService6 (){
-//		log.info("doInnerService1->doOuterService(timeout)->confirmOuterService(false)->cancelInnerService1");
 		applicationService6.doService("hello");
-
 		return "app6";
+	}
+
+	@GetMapping("/app7")
+	public String applicationService7(){
+		log.info("doInnerService1->doOuterService(timeout)->confirmOuterService(false)->cancelInnerService1");
+		try {
+			applicationService7.doSyncService("hello");
+		} catch (TransactionTimeOutException e) {
+			e.printStackTrace();
+		}
+
+		return "ApplicationService5.doServiceBeforeAsync->TestOuterService.processAsync() * * *> AbstractTransaction2.callback()->ApplicationService5.doServiceAfterAsync()";
 	}
 }

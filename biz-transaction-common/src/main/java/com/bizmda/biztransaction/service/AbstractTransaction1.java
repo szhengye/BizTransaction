@@ -1,16 +1,14 @@
 package com.bizmda.biztransaction.service;
 
 import com.bizmda.biztransaction.exception.Transaction1Exception;
-import com.bizmda.biztransaction.exception.TransactionMaxConfirmFailException;
 import com.bizmda.biztransaction.exception.TransactionTimeOutException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Slf4j
 public abstract class AbstractTransaction1 extends AbstractTransaction {
     @Autowired
-    private RabbitSenderService rabbitSenderService;
+    private RabbitmqSenderService rabbitmqSenderService;
 
     public Object doService(Object inParams) throws Transaction1Exception {
         this.setConfirmTimes(0);
@@ -23,7 +21,7 @@ public abstract class AbstractTransaction1 extends AbstractTransaction {
                 throw new Transaction1Exception(Transaction1Exception.CANCEL_SERVICE_EXCEPTION_CODE);
             }
         } catch (TransactionTimeOutException e) {
-            rabbitSenderService.sendSyncService(this, "confirmOuterService", "doInnerService2", "cancelInnerService1");
+            rabbitmqSenderService.sendSyncService(this, "confirmOuterService", "doInnerService2", "cancelInnerService1");
             throw new Transaction1Exception(Transaction1Exception.OUTER_SERVICE_TIMEOUT_EXCEPTION_CODE, e);
         }
     }

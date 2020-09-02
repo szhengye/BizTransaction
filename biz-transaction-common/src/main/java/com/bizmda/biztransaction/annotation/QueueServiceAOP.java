@@ -1,7 +1,7 @@
 package com.bizmda.biztransaction.annotation;
 
 import com.bizmda.biztransaction.service.AbstractTransaction;
-import com.bizmda.biztransaction.service.RabbitSenderService;
+import com.bizmda.biztransaction.service.RabbitmqSenderService;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -19,7 +19,7 @@ import java.util.List;
 public class QueueServiceAOP {
     public static ThreadLocal<Boolean> queueServiceListener = new ThreadLocal<Boolean>();
     @Autowired
-    private RabbitSenderService rabbitSenderService ;
+    private RabbitmqSenderService rabbitmqSenderService;
 
     @Around("@annotation(ds)")
     public Object doQueueService(ProceedingJoinPoint joinPoint, QueueService ds) throws Throwable {
@@ -38,7 +38,7 @@ public class QueueServiceAOP {
 
         Object[] args = joinPoint.getArgs();// 参数值
         AbstractTransaction tranBean = (AbstractTransaction)joinPoint.getTarget();
-        rabbitSenderService.sendQueueService(ds.queue(),tranBean,methodName,parameterTypes,args);
+        rabbitmqSenderService.sendQueueService(ds.queue(),tranBean,methodName,parameterTypes,args);
         return null;
     }
 }

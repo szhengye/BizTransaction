@@ -14,7 +14,6 @@ import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +24,7 @@ import java.util.Map;
  **/
 @Slf4j
 @Service
-public class RabbitSenderService {
+public class RabbitmqSenderService {
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
@@ -59,7 +58,7 @@ public class RabbitSenderService {
 //                mp.setHeader(AbstractJavaTypeMapper.DEFAULT_CONTENT_CLASSID_FIELD_NAME, Map.class);
 
                 //动态设置TTL
-                mp.setExpiration(RabbitSenderService.expirationArray[transactionBean.getConfirmTimes()]);
+                mp.setExpiration(RabbitmqSenderService.expirationArray[transactionBean.getConfirmTimes()]);
                 return message;
             }
         });
@@ -101,7 +100,7 @@ public class RabbitSenderService {
      */
     public void sendTTLExpireMsg(int type, String beanName, int no, Object msg, Object transactionBean) throws TransactionMaxConfirmFailException {
 
-        if (no >= RabbitSenderService.expirationArray.length - 2) {
+        if (no >= RabbitmqSenderService.expirationArray.length - 2) {
             throw new TransactionMaxConfirmFailException();
         }
         Map map = Maps.newHashMap();
@@ -122,12 +121,12 @@ public class RabbitSenderService {
                 mp.setHeader(AbstractJavaTypeMapper.DEFAULT_CONTENT_CLASSID_FIELD_NAME, Map.class);
 
                 //动态设置TTL
-                mp.setExpiration(RabbitSenderService.expirationArray[no]);
+                mp.setExpiration(RabbitmqSenderService.expirationArray[no]);
                 return message;
             }
         });
         log.info("sendTTLExpireMsg({}, {}, {}, {}, {})",type, beanName, no, msg, transactionBean);
-        log.info("Message expiration：" + RabbitSenderService.expirationArray[no]);
+        log.info("Message expiration：" + RabbitmqSenderService.expirationArray[no]);
 
     }
 
