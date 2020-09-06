@@ -1,5 +1,6 @@
 package com.bizmda.biztransaction.annotation;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.bizmda.biztransaction.service.AbstractTransaction;
 import com.bizmda.biztransaction.service.RabbitmqSenderService;
 import com.open.capacity.redis.util.RedisUtil;
@@ -26,8 +27,10 @@ public class AsyncServiceAOP {
     public Object doAsyncService(ProceedingJoinPoint joinPoint, AsyncService ds) throws Throwable {
         Object[] args = joinPoint.getArgs();// 参数值
         Map context = new HashMap();
-        AbstractTransaction transactionBean = (AbstractTransaction)joinPoint.getTarget();
-        context.put("transactionBean",transactionBean);
+        AbstractTransaction transactionBean = (AbstractTransaction)joinPoint.getThis();
+        Map transactionMap = new HashMap();
+        BeanUtil.copyProperties(transactionBean,transactionMap);
+        context.put("transactionBean",transactionMap);
         context.put("callbackMethod",ds.callbackMethod());
         context.put("timeoutMethod",ds.timeoutMethod());
         String key = "biz:asyncservice:" + args[0] + ":" + args[1];

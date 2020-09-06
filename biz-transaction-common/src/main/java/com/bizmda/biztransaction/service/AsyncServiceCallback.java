@@ -19,21 +19,23 @@ public class AsyncServiceCallback {
 
     // 外部服务异步回调后，应由开发者主动调用的方法，以触发回调后的业务逻辑
     public void callback(String outerId, String transactionKey, Object inParams) throws TransactionException {
+        log.info("callback({},{},{})",outerId,transactionKey,inParams);
         String key = "biz:asyncservice:" + outerId + ":" + transactionKey;
+
         Map context = (Map)this.redisUtil.get(key);
         if (context == null) {
             throw new TransactionException(TransactionException.NO_MATCH_TRANSACTION_EXCEPTION_CODE);
         }
         this.redisUtil.del(key);
 //        log.info("callback context:{}",context);
-        AbstractTransaction transactionBean = (AbstractTransaction)context.get("transactionBean");
+        Map transactionMap = (Map)context.get("transactionBean");
         String callbackMethodName = (String)context.get("callbackMethod");
 //        String timeoutMethod = (String)context.get("timeoutMethod");
 
 
-        String beanName = transactionBean.getBeanName();
-        AbstractTransaction transaction2 = (AbstractTransaction2) SpringContextsUtil.getBean(beanName, AbstractTransaction.class);
-        BeanUtil.copyProperties(transactionBean, transaction2);
+        String beanName = (String)transactionMap.get("beanName");
+        AbstractTransaction transaction2 = (AbstractTransaction) SpringContextsUtil.getBean(beanName, AbstractTransaction.class);
+        BeanUtil.copyProperties(transactionMap, transaction2);
 
 //        log.info("callback transaction2:{},{}",callbackMethodName,transaction2);
         Method callbackMethod = null;

@@ -1,5 +1,6 @@
 package com.bizmda.biztransaction.service;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.bizmda.biztransaction.exception.TransactionException;
 import com.open.capacity.redis.util.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +26,9 @@ public abstract class AbstractTransaction2 extends AbstractTransaction {
         log.info("saveState({},{},{})",outerId,transactionKey,expiredTime);
         String key = "biz:asyncservice:" + outerId + ":" + transactionKey;
         Map context = new HashMap();
-        context.put("transactionBean",this);
+        Map transactionMap = new HashMap();
+        BeanUtil.copyProperties(this,transactionMap);
+        context.put("transactionBean",transactionMap);
         context.put("callbackMethod","doServiceAfterAsync");
         context.put("timeoutMethod","callbackTimeout");
         this.redisUtil.set(key, context, expiredTime);

@@ -37,7 +37,7 @@ public class QueueServiceAOP {
         }
 
         Object[] args = joinPoint.getArgs();// 参数值
-        AbstractTransaction tranBean = (AbstractTransaction)joinPoint.getTarget();
+        AbstractTransaction tranBean = (AbstractTransaction)joinPoint.getThis();
         rabbitmqSenderService.sendQueueService(ds.queue(),tranBean,methodName,parameterTypes,args);
         return null;
     }

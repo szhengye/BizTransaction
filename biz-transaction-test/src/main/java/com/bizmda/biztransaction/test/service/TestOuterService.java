@@ -41,7 +41,6 @@ public class TestOuterService {
                 try {
                     Thread.sleep(5000);
                     try {
-                        log.info("AsyncServiceCallback.callback({},{},{})","TestOuterService",transactionKey,"");
                         asyncServiceCallback.callback("TestOuterService", transactionKey, "TestOuterService.processAsync() return object");
                     } catch (TransactionException e) {
                         e.printStackTrace();
