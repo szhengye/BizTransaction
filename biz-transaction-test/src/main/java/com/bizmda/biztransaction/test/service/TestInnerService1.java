@@ -7,22 +7,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class TestInnerService1 {
 
-    public void process() {
-        log.info("TestInnerService1.process()");
+    public void doService() {
+        log.info("doService()");
     }
 
-    public void processWithException() throws Exception {
-        log.info("TestInnerService1.processWithException");
-        throw new Exception("TestInnerService1.processWithException");
-    }
-
-    public void cancel() {
-        log.info("TestInnerService1.cancel()");
-    }
-
-    public void cancelWithException() throws Exception {
-        log.info("TestInnerService1.cancelWithException");
-        throw new Exception("TestInnerService1.cancelWithException");
+    public void rollbackService() {
+        log.info("rollbackService()");
     }
 
 }

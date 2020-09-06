@@ -1,16 +1,11 @@
 package com.bizmda.biztransaction.test.controller;
 
-import com.bizmda.biztransaction.annotation.QueueServiceAOP;
-import com.bizmda.biztransaction.exception.Transaction1Exception;
-import com.bizmda.biztransaction.exception.Transaction2Exception;
 import com.bizmda.biztransaction.exception.TransactionException;
-import com.bizmda.biztransaction.exception.TransactionTimeOutException;
 import com.bizmda.biztransaction.test.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -33,74 +28,67 @@ public class TestController {
 
 	@GetMapping("/app1")
 	public String applicationService1 (){
-		log.info("doInnerService1->doOuterService(true)->doInnerService2");
 		try {
 			applicationService1.doService("hello");
-		} catch (Transaction1Exception e) {
+		} catch (TransactionException e) {
 			e.printStackTrace();
 		}
-		return "ApplicationService1.doInnerService1->doOuterService(true)->doInnerService2";
+		return "依次执行beforeSyncService()、doSyncService()、afterSyncService()";
 	}
 
 	@GetMapping("/app2")
 	public String applicationService2 (){
-		log.info("doInnerService1->doOuterService(false)->cancelInnerService1");
 		try {
 			applicationService2.doService("hello");
-		} catch (Transaction1Exception e) {
+		} catch (TransactionException e) {
 			e.printStackTrace();
 		}
-		return "ApplicationService2.doInnerService1->doOuterService(false)->cancelInnerService1";
+		return "doSyncService()返回失败，应触发rollbackService()";
 	}
 
 	@GetMapping("/app3")
 	public String applicationService3 (){
-		log.info("doInnerService1->doOuterService(timeout)->confirmOuterService(true)->doInnerService2");
 		try {
 			applicationService3.doService("hello");
-		} catch (Transaction1Exception e) {
+		} catch (TransactionException e) {
 			log.info("applicationService3.doService() error code:{}",e.getCode());
 		}
-		return "ApplicationService3.doInnerService1->doOuterService(timeout)->confirmOuterService(true)->doInnerService2";
+		return "doSyncService()超时，触发confirmSyncService()，连续2次超时，第3次返回成功";
 	}
 
 	@GetMapping("/app4")
 	public String applicationService4 (){
-		log.info("doInnerService1->doOuterService(timeout)->confirmOuterService(false)->cancelInnerService1");
 		try {
 			applicationService4.doService("hello");
-		} catch (Transaction1Exception e) {
+		} catch (TransactionException e) {
 			e.printStackTrace();
 		}
-		return "ApplicationService4.doInnerService1->doOuterService(timeout)->confirmOuterService(false)->cancelInnerService1";
+		return "doSyncService()超时，触发confirmSyncService()，连续2次超时，第3次返回失败";
 	}
 
 	@GetMapping("/app5")
 	public String applicationService5 (){
-		log.info("doInnerService1->doOuterService(timeout)->confirmOuterService(false)->cancelInnerService1");
 		try {
 			applicationService5.doService("hello");
-		} catch (Transaction2Exception e) {
+		} catch (TransactionException e) {
 			e.printStackTrace();
 		}
-		return "ApplicationService5.doServiceBeforeAsync->TestOuterService.processAsync() * * *> AbstractTransaction2.callback()->ApplicationService5.doServiceAfterAsync()";
+		return "异常调用，并回调";
 	}
 
 	@GetMapping("/app6")
 	public String applicationService6 (){
 		applicationService6.doService("hello");
-		return "app6";
+		return "异步任务调用";
 	}
 
 	@GetMapping("/app7")
-	public String applicationService7(){
-		log.info("doInnerService1->doOuterService(timeout)->confirmOuterService(false)->cancelInnerService1");
+	public String applicationService7(@RequestParam("flag")String flag){
 		try {
-			applicationService7.doSyncService("hello");
-		} catch (TransactionTimeOutException e) {
+			applicationService7.doService(flag);
+		} catch (TransactionException e) {
 			e.printStackTrace();
 		}
-
-		return "ApplicationService5.doServiceBeforeAsync->TestOuterService.processAsync() * * *> AbstractTransaction2.callback()->ApplicationService5.doServiceAfterAsync()";
+		return "测试@SyncService注解方法";
 	}
 }

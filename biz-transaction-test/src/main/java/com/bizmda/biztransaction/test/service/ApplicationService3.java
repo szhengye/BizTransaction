@@ -39,39 +39,40 @@ public class ApplicationService3 extends AbstractTransaction1 {
 //    }
 
     @Override
-    public void doInnerService1(Object msg) {
+    public void beforeSyncService(Object msg) {
+        log.info("beforeSyncService()");
         testOuterService.setMaxTimeoutTimes(3);
-        testInnerService1.process();
+        testInnerService1.doService();
         this.val1 = "Hello world!";
         this.val2 = 98;
     }
 
     @Override
-    public boolean doOuterService() throws TransactionTimeOutException {
-        log.info("doOuterService()");
-        testOuterService.processWithTimeout();
+    public boolean doSyncService() throws TransactionTimeOutException {
+        log.info("doSyncService()");
+        testOuterService.doServiceOfTimeout();
         return true;
     }
 
     @Override
-    public Object doInnerService2() {
-        log.info("doInnerService2()");
+    public Object afterSyncService() {
+        log.info("afterSyncService()");
 
-        testInnerService2.process();
+        testInnerService2.doService();
         return null;
     }
 
     @Override
-    public boolean confirmOuterService() throws TransactionTimeOutException {
+    public boolean confirmSyncService() throws TransactionTimeOutException {
         log.info("confirmOuterService()");
         log.info("val1:{}, val2:{}",this.val1,this.val2);
 
-        return testOuterService.confirmTimeoutAndReturn(true);
+        return testOuterService.confirmService(true);
     }
 
     @Override
-    public void cancelInnerService1() {
-        log.info("cancelInnerService1()");
-        testInnerService1.cancel();
+    public void rollbackService() {
+        log.info("rollbackService()");
+        testInnerService1.rollbackService();
     }
 }

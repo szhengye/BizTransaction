@@ -1,5 +1,6 @@
 package com.bizmda.biztransaction.service;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.bizmda.biztransaction.exception.TransactionMaxConfirmFailException;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +44,9 @@ public class RabbitmqSenderService {
 
     public void sendSyncService(AbstractTransaction transactionBean, String confirmMethod, String commitMethod, String rollbackMethod) {
         Map context = new HashMap();
-        context.put("transactionBean",transactionBean);
+        Map transactionMap = new HashMap();
+        BeanUtil.copyProperties(transactionBean,transactionMap);
+        context.put("transactionBean",transactionMap);
         context.put("confirmMethod",confirmMethod);
         context.put("commitMethod",commitMethod);
         context.put("rollbackMethod",rollbackMethod);
@@ -58,6 +61,7 @@ public class RabbitmqSenderService {
 //                mp.setHeader(AbstractJavaTypeMapper.DEFAULT_CONTENT_CLASSID_FIELD_NAME, Map.class);
 
                 //动态设置TTL
+                log.info("RabbitmqSenderService.expirationArray[transactionBean.getConfirmTimes()]:{}",RabbitmqSenderService.expirationArray[transactionBean.getConfirmTimes()]);
                 mp.setExpiration(RabbitmqSenderService.expirationArray[transactionBean.getConfirmTimes()]);
                 return message;
             }

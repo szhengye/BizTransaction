@@ -15,7 +15,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 @Slf4j
 @Service
-@Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
+@Scope("prototype")
 public class ApplicationService6 extends AbstractTransaction {
     @Override
     public Object doService(Object inParams) {

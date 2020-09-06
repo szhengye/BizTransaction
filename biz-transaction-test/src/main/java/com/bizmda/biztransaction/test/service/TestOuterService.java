@@ -1,14 +1,18 @@
 package com.bizmda.biztransaction.test.service;
 
-import com.bizmda.biztransaction.exception.Transaction2Exception;
+import com.bizmda.biztransaction.exception.TransactionException;
 import com.bizmda.biztransaction.exception.TransactionTimeOutException;
-import com.bizmda.biztransaction.service.AbstractTransaction2;
+import com.bizmda.biztransaction.service.AsyncServiceCallback;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
 public class TestOuterService {
+    @Autowired
+    private AsyncServiceCallback asyncServiceCallback;
+
     int maxTimeoutTimes;
     int currentTimeoutTimes;
 
@@ -17,8 +21,8 @@ public class TestOuterService {
         this.currentTimeoutTimes = 0;
     }
 
-    public boolean process(boolean result) {
-        log.info("TestOuterService.process()");
+    public boolean doService(boolean result) {
+        log.info("doService() 返回:{}",result);
         try {
             Thread.sleep(3000);
         } catch (InterruptedException e) {
@@ -27,17 +31,19 @@ public class TestOuterService {
         return result;
     }
 
-    public Object processAsync(Object inParams) {
-        log.info("processAsync()");
+    public Object doServiceAsync(Object inParams) {
+        log.info("doServiceAsync()");
         String transactionKey = (String)inParams;
+        AsyncServiceCallback asyncServiceCallback = this.asyncServiceCallback;
         Thread thread=new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     Thread.sleep(5000);
                     try {
-                        AbstractTransaction2.callback("TestOuterService", transactionKey, "TestOuterService.processAsync() return object");
-                    } catch (Transaction2Exception e) {
+                        log.info("AsyncServiceCallback.callback({},{},{})","TestOuterService",transactionKey,"");
+                        asyncServiceCallback.callback("TestOuterService", transactionKey, "TestOuterService.processAsync() return object");
+                    } catch (TransactionException e) {
                         e.printStackTrace();
                     }
                 } catch (InterruptedException e) {
@@ -47,11 +53,11 @@ public class TestOuterService {
         });
 
         thread.start();
-        return "Return by TestOuterService.processAsync() !";
+        return "Return by TestOuterService.doServiceAsync() !";
     }
 
-    public void processWithTimeout() throws TransactionTimeOutException {
-        log.info("TestOuterService.processWithTimeout()");
+    public void doServiceOfTimeout() throws TransactionTimeOutException {
+        log.info("doServiceWithTimeout() 触发服务调用超时");
         try {
             Thread.sleep(3000);
         } catch (InterruptedException e) {
@@ -60,8 +66,7 @@ public class TestOuterService {
         throw new TransactionTimeOutException();
     }
 
-    public boolean confirmTimeoutAndReturn(boolean result) throws TransactionTimeOutException {
-        log.info("TestOuterService.confirmTimeoutAndReturn(" + String.valueOf(result) + ")");
+    public boolean confirmService(boolean result) throws TransactionTimeOutException {
         try {
             Thread.sleep(3000);
         } catch (InterruptedException e) {
@@ -69,8 +74,10 @@ public class TestOuterService {
         }
         this.currentTimeoutTimes ++;
         if (this.currentTimeoutTimes < this.maxTimeoutTimes) {
+            log.info("confirmService()：响应超时");
             throw new TransactionTimeOutException();
         }
+        log.info("confirmService({})",result);
         return result;
     }
 }

@@ -8,4 +8,5 @@ import java.lang.annotation.*;
 public @interface AsyncService {
     String callbackMethod() default "asyncServiceCallback";
     String timeoutMethod() default "asyncServiceTimeout";
+    int timeout() default 60;
 }

@@ -10,3 +10,4 @@ public @interface SyncService {
     String commitMethod() default "syncServiceCommit";
     String rollbackMethod() default "syncServiceRollback";
 }
+

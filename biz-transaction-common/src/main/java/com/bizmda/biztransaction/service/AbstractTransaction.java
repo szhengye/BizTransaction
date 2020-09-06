@@ -1,8 +1,6 @@
 package com.bizmda.biztransaction.service;
 
-import com.bizmda.biztransaction.exception.Transaction1Exception;
 import com.bizmda.biztransaction.exception.TransactionException;
-import com.bizmda.biztransaction.exception.TransactionTimeOutException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.BeanNameAware;
 

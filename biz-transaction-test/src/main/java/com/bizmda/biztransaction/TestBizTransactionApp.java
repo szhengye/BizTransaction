@@ -3,7 +3,9 @@
  */
 package com.bizmda.biztransaction;
 
+import com.bizmda.biztransaction.annotation.AsyncServiceAOP;
 import com.bizmda.biztransaction.annotation.QueueServiceAOP;
+import com.bizmda.biztransaction.annotation.SyncServiceAOP;
 import com.bizmda.biztransaction.service.SpringContextsUtil;
 import com.bizmda.biztransaction.test.service.ApplicationService1;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +22,7 @@ import org.springframework.context.annotation.Import;
 * mq ttl消息 
 */
 
-@Import(QueueServiceAOP.class)
+@Import({QueueServiceAOP.class,SyncServiceAOP.class, AsyncServiceAOP.class})
 @EnableAspectJAutoProxy(exposeProxy = true)
 @Configuration
 @SpringBootApplication

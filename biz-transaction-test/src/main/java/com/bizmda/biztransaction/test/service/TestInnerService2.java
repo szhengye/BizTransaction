@@ -7,13 +7,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class TestInnerService2 {
 
-    public void process() {
-        log.info("TestInnerService2.process()");
-    }
-
-    public void processWithException() throws Exception {
-        log.info("TestInnerService2.processWithException");
-        throw new Exception("TestInnerService2.processWithException");
+    public Object doService() {
+        log.info("doService()");
+        return "TestInnerService2.doService()返回结果";
     }
 
 }
