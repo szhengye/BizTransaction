@@ -34,7 +34,9 @@ public class RabbitmqSenderService {
 
     public void sendQueueService(String queueName,AbstractTransaction transactionBean, String methodName, List<String> parameterTypes,Object[] args) {
         Map context = new HashMap();
-        context.put("transactionBean",transactionBean);
+        Map transactionMap = new HashMap();
+        BeanUtil.copyProperties(transactionBean,transactionMap);
+        context.put("transactionBean",transactionMap);
         context.put("methodName",methodName);
         context.put("parameterTypes",parameterTypes);
         context.put("args",args);
