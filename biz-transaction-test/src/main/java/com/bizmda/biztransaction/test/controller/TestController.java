@@ -27,6 +27,8 @@ public class TestController {
 	private ApplicationService7 applicationService7 ;
 	@Autowired
 	private ApplicationService8 applicationService8 ;
+	@Autowired
+	private ApplicationService9 applicationService9 ;
 
 	@GetMapping("/app1")
 	public String applicationService1 (){
@@ -98,6 +100,16 @@ public class TestController {
 	public String applicationService8(){
 		try {
 			applicationService8.doService("hello");
+		} catch (TransactionException e) {
+			e.printStackTrace();
+		}
+		return "测试@AsyncService注解方法";
+	}
+
+	@GetMapping("/app9")
+	public String applicationService9(){
+		try {
+			applicationService9.doService("hello");
 		} catch (TransactionException e) {
 			e.printStackTrace();
 		}

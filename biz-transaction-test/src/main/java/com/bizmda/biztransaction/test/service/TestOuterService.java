@@ -31,9 +31,9 @@ public class TestOuterService {
         return result;
     }
 
-    public Object doServiceAsync(Object inParams) {
+    public Object doServiceAsync(String serviceId,String transactionKey,String inParams) {
         log.info("doServiceAsync()");
-        String transactionKey = (String)inParams;
+//        String transactionKey = (String)inParams;
         AsyncServiceCallback asyncServiceCallback = this.asyncServiceCallback;
         Thread thread=new Thread(new Runnable() {
             @Override
@@ -41,7 +41,9 @@ public class TestOuterService {
                 try {
                     Thread.sleep(5000);
                     try {
-                        asyncServiceCallback.callback("TestOuterService", transactionKey, "TestOuterService.processAsync() return object");
+//                        asyncServiceCallback.callback("TestOuterService", transactionKey, "TestOuterService.processAsync() return object");
+                        Object result = asyncServiceCallback.callback(serviceId, transactionKey, "callback:"+ inParams);
+                        log.info("回调结果:{}",result);
                     } catch (TransactionException e) {
                         e.printStackTrace();
                     }
