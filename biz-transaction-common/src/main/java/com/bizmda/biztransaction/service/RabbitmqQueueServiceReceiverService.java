@@ -2,6 +2,7 @@ package com.bizmda.biztransaction.service;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.bizmda.biztransaction.annotation.QueueServiceAOP;
+import com.bizmda.biztransaction.config.RabbitmqConfig;
 import com.bizmda.biztransaction.exception.TransactionMaxConfirmFailException;
 import com.bizmda.biztransaction.exception.TransactionTimeOutException;
 import com.bizmda.biztransaction.service.AbstractTransaction;
@@ -24,7 +25,8 @@ import java.util.Map;
 @Service
 public class RabbitmqQueueServiceReceiverService {
 
-    @RabbitListener(queues = {"queue.biztransaction.queueservice"}, containerFactory = "multiListenerContainer")
+//    @RabbitListener(queues = {"queue.biztransaction.queueservice"}, containerFactory = "multiListenerContainer")
+    @RabbitListener(queues = RabbitmqConfig.QueueServiceQueue)
     public void consume(Map map) {
         log.info("***receive:{}", map);
         Object[] args = ((List)map.get("args")).toArray();

@@ -23,6 +23,7 @@ import java.util.Map;
 @Configuration
 public class RabbitmqConfig {
 
+
     private final static Logger log = LoggerFactory.getLogger(RabbitmqConfig.class);
 
     @Autowired
@@ -77,7 +78,7 @@ public class RabbitmqConfig {
 
 			@Override
 			public void confirm(CorrelationData correlationData, boolean ack, String cause) {
-				log.info("消息发送成功:correlationData({}),ack({}),cause({})",correlationData,ack,cause);
+//				log.info("消息发送成功:correlationData({}),ack({}),cause({})",correlationData,ack,cause);
 			}
 			 
             
@@ -120,9 +121,10 @@ public class RabbitmqConfig {
         return new Queue("dead.queue",true,false,false,argsMap);
     }
 
+    public final static String QueueServiceQueue = "queue.biztransaction.queueservice";
     @Bean
     public Queue QueueServiceQueue() {
-        return new Queue("queue.biztransaction.queueservice");
+        return new Queue(RabbitmqConfig.QueueServiceQueue);
     }
 
     //死信交换机

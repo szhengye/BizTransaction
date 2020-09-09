@@ -107,12 +107,17 @@ public class TestController {
 	}
 
 	@GetMapping("/app9")
-	public String applicationService9(){
+	public String applicationService9(@RequestParam("flag")int flag){
 		try {
+			applicationService9.setFlag(flag);
 			applicationService9.doService("hello");
 		} catch (TransactionException e) {
 			e.printStackTrace();
 		}
-		return "测试@AsyncService注解方法";
+		return "全面测试@SyncService、@AsyncService、@QueueService注解方法:\n"
+				+ "http://127.0.0.1/app9?flag=?\n"
+				+ "1:异步调用订单验证->异步调用微信支付\n"
+				+ "2:异步调用订单验证->同步调用云闪付（超时后确认成功）->异步通知企业成功\n"
+				+ "3:异步调用订单验证->同步调用云闪付（超时后确认失败）->异步通知企业失败\n";
 	}
 }

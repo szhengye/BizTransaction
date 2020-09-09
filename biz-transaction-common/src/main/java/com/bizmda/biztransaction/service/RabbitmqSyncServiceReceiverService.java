@@ -29,12 +29,12 @@ public class RabbitmqSyncServiceReceiverService {
      */
     @RabbitListener(queues = {"dead.real.queue"}, containerFactory = "multiListenerContainer")
     public void syncServiceListener(Map map) {
-        log.info("***receive:{}", map);
+//        log.info("***receive:{}", map);
         Map transactionMap = (Map)map.get("transactionBean");
         String beanName = (String)transactionMap.get("beanName");
         AbstractTransaction transactionBean = (AbstractTransaction) SpringContextsUtil.getBean(beanName, AbstractTransaction.class);
         BeanUtil.copyProperties(transactionMap, transactionBean);
-        log.info("transactionBean:{}",transactionBean);
+//        log.info("transactionBean:{}",transactionBean);
         String confirmMethodName = (String)map.get("confirmMethod");
         String commitMethodName = (String)map.get("commitMethod");
         String rollbackMethodName = (String)map.get("rollbackMethod");

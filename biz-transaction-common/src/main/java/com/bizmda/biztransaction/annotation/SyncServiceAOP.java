@@ -45,15 +45,15 @@ public class SyncServiceAOP {
             }
             return result;
 //        } catch (InvocationTargetException e) {
-//            log.info("szy:1");
+////            log.info("szy:1");
 //            if (e.getTargetException().getClass().equals(TransactionTimeOutException.class)) {
-//                log.info("szy:2");
+////                log.info("szy:2");
 //                transactionBean.setConfirmTimes(transactionBean.getConfirmTimes() + 1);
 //                rabbitmqSenderService.sendSyncService(transactionBean, ds.confirmMethod(), ds.commitMethod(), ds.rollbackMethod());
 //            }
 //            throw e;
         } catch (TransactionTimeOutException e) {
-            log.info("szy:2");
+//            log.info("szy:2");
 //            transactionBean.setConfirmTimes(transactionBean.getConfirmTimes() + 1);
             rabbitmqSenderService.sendSyncService(transactionBean, ds.confirmMethod(), ds.commitMethod(), ds.rollbackMethod());
             throw e;

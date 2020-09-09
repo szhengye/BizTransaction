@@ -45,6 +45,7 @@ public class RabbitmqSenderService {
     }
 
     public void sendSyncService(AbstractTransaction transactionBean, String confirmMethod, String commitMethod, String rollbackMethod) {
+        log.info("sendSyncService({},{},{},{})",transactionBean,confirmMethod,commitMethod,rollbackMethod);
         Map context = new HashMap();
         Map transactionMap = new HashMap();
         BeanUtil.copyProperties(transactionBean,transactionMap);
@@ -63,7 +64,7 @@ public class RabbitmqSenderService {
 //                mp.setHeader(AbstractJavaTypeMapper.DEFAULT_CONTENT_CLASSID_FIELD_NAME, Map.class);
 
                 //动态设置TTL
-                log.info("RabbitmqSenderService.expirationArray[transactionBean.getConfirmTimes()]:{}",RabbitmqSenderService.expirationArray[transactionBean.getConfirmTimes()]);
+//                log.info("RabbitmqSenderService.expirationArray[transactionBean.getConfirmTimes()]:{}",RabbitmqSenderService.expirationArray[transactionBean.getConfirmTimes()]);
                 mp.setExpiration(RabbitmqSenderService.expirationArray[transactionBean.getConfirmTimes()]);
                 return message;
             }

@@ -13,7 +13,7 @@ public class TestOuterService {
     @Autowired
     private AsyncServiceCallback asyncServiceCallback;
 
-    int maxTimeoutTimes;
+    int maxTimeoutTimes = 3;
     int currentTimeoutTimes;
 
     public void setMaxTimeoutTimes(int maxTimeoutTimes) {
