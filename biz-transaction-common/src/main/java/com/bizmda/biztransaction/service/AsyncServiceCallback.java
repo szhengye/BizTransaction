@@ -18,7 +18,7 @@ public class AsyncServiceCallback {
     private RedisUtil redisUtil ;
 
     // 外部服务异步回调后，应由开发者主动调用的方法，以触发回调后的业务逻辑
-    public void callback(String outerId, String transactionKey, Object inParams) throws TransactionException {
+    public Object callback(String outerId, String transactionKey, Object inParams) throws TransactionException {
         log.info("callback({},{},{})",outerId,transactionKey,inParams);
         String key = "biz:asyncservice:" + outerId + ":" + transactionKey;
 
@@ -43,15 +43,16 @@ public class AsyncServiceCallback {
             callbackMethod = transaction2.getClass().getMethod(callbackMethodName,Object.class);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
-            return;
+            return null;
         }
 
         try {
-            callbackMethod.invoke(transaction2,inParams);
+            return callbackMethod.invoke(transaction2,inParams);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
+        return null;
     }
 }
