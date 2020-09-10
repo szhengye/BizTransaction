@@ -81,7 +81,7 @@ public class ApplicationService9 extends AbstractTransaction {
     public String doAsyncOrderValidCallback(Object inParams) {
         log.info("doAsyncOrderValidCallback({})", inParams);
         log.info("4.充值订单验证");
-        log.info(("5.调用微信支付请求"));
+        log.info(("5.调用支付请求"));
         String transactionKey = String.valueOf(Clock.systemDefaultZone().millis());
         switch (this.flag) {
             case 1:
