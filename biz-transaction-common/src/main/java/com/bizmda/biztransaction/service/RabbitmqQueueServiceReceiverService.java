@@ -25,21 +25,21 @@ import java.util.Map;
 @Service
 public class RabbitmqQueueServiceReceiverService {
 
-//    @RabbitListener(queues = {"queue.biztransaction.queueservice"}, containerFactory = "multiListenerContainer")
-    @RabbitListener(queues = RabbitmqConfig.QueueServiceQueue)
+    @RabbitListener(queues = RabbitmqConfig.QueueServiceQueue, containerFactory = "multiListenerContainer")
+//    @RabbitListener(queues = RabbitmqConfig.QueueServiceQueue)
     public void consume(Map map) {
-        log.info("***receive:{}", map);
+//        log.info("***receive:{}", map);
         Object[] args = ((List)map.get("args")).toArray();
-        log.info("args:{},{},{}",args.length,args[0],args[1]);
+//        log.info("args:{},{}",args.length,args);
         Map transactionMap = (Map)map.get("transactionBean");
         String beanName = (String)transactionMap.get("beanName");
         AbstractTransaction transactionBean = (AbstractTransaction) SpringContextsUtil.getBean(beanName, AbstractTransaction.class);
         BeanUtil.copyProperties(transactionMap, transactionBean);
-        log.info("transactionBean:{}",transactionBean);
+//        log.info("transactionBean:{}",transactionBean);
         String[] parameterTypes = ((List<String>) map.get("parameterTypes")).toArray(new String[0]);
-        log.info("parameterTypes:{},{},{}",parameterTypes.length,parameterTypes[0],parameterTypes[1]);
+//        log.info("parameterTypes:{},{}",parameterTypes.length,parameterTypes);
         String methodName = (String)map.get("methodName");
-        log.info("methodName:{}",methodName);
+//        log.info("methodName:{}",methodName);
         List<Class> classArray = new ArrayList<Class>();
         for(String parameterType:parameterTypes) {
             try {

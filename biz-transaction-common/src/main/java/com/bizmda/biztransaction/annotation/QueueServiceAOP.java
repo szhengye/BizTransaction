@@ -23,7 +23,7 @@ public class QueueServiceAOP {
 
     @Around("@annotation(ds)")
     public Object doQueueService(ProceedingJoinPoint joinPoint, QueueService ds) throws Throwable {
-        log.info("QueueService()");
+//        log.info("QueueService()");
         if (QueueServiceAOP.queueServiceListener.get() != null) {
             Object result = joinPoint.proceed();
             return result;

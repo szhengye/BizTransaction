@@ -41,6 +41,7 @@ public class RabbitmqSenderService {
         context.put("parameterTypes",parameterTypes);
         context.put("args",args);
         rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
+        rabbitTemplate.setExchange(null);
         rabbitTemplate.convertAndSend(queueName,context);
     }
 
