@@ -2,7 +2,7 @@ package com.bizmda.biztransaction.test.service;
 
 import com.bizmda.biztransaction.annotation.AsyncService;
 import com.bizmda.biztransaction.annotation.QueueService;
-import com.bizmda.biztransaction.annotation.SyncService;
+import com.bizmda.biztransaction.annotation.SyncConfirmService;
 import com.bizmda.biztransaction.exception.TransactionException;
 import com.bizmda.biztransaction.exception.TransactionTimeOutException;
 import com.bizmda.biztransaction.service.AbstractTransaction;
@@ -140,7 +140,7 @@ public class ApplicationService9 extends AbstractTransaction {
      * @return
      * @throws TransactionTimeOutException
      */
-    @SyncService(confirmMethod = "confirmUnionPay", commitMethod = "commitUnionPay", rollbackMethod = "rollbackUnionPay")
+    @SyncConfirmService(confirmMethod = "confirmUnionPay", commitMethod = "commitUnionPay", rollbackMethod = "rollbackUnionPay")
     public boolean doUnionPay(Object inParams) throws TransactionTimeOutException {
         log.info("doUnionPay({})", inParams);
         log.info("6.模拟云闪付响应超时");

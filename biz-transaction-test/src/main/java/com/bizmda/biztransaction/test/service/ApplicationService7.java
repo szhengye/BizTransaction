@@ -1,6 +1,6 @@
 package com.bizmda.biztransaction.test.service;
 
-import com.bizmda.biztransaction.annotation.SyncService;
+import com.bizmda.biztransaction.annotation.SyncConfirmService;
 import com.bizmda.biztransaction.exception.TransactionException;
 import com.bizmda.biztransaction.exception.TransactionTimeOutException;
 import com.bizmda.biztransaction.service.AbstractTransaction;
@@ -28,7 +28,7 @@ public class ApplicationService7 extends AbstractTransaction {
             return o;
     }
 
-    @SyncService
+    @SyncConfirmService
     public boolean doSyncService(String flag) throws TransactionTimeOutException {
         log.info("doSyncService()");
         testOuterService.setMaxTimeoutTimes(3);

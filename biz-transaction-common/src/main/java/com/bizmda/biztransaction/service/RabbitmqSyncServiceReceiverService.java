@@ -1,7 +1,6 @@
 package com.bizmda.biztransaction.service;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.bizmda.biztransaction.annotation.SyncServiceAOP;
 import com.bizmda.biztransaction.exception.TransactionException;
 import com.bizmda.biztransaction.exception.TransactionTimeOutException;
 import lombok.extern.slf4j.Slf4j;

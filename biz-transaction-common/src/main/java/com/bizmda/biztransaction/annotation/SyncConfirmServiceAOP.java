@@ -10,19 +10,18 @@ import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 @Slf4j
 @Aspect
 @Order(-1) // 保证该AOP在@Transactional之前执行
-public class SyncServiceAOP {
+public class SyncConfirmServiceAOP {
     //    public static ThreadLocal<Boolean> syncServiceListener = new ThreadLocal<Boolean>();
     @Autowired
     private RabbitmqSenderService rabbitmqSenderService;
 
     @Around(value = "@annotation(ds)")
-    public Object doSyncService(ProceedingJoinPoint joinPoint, SyncService ds) throws Throwable {
+    public Object doSyncService(ProceedingJoinPoint joinPoint, SyncConfirmService ds) throws Throwable {
         AbstractTransaction transactionBean = (AbstractTransaction) joinPoint.getThis();
         transactionBean.setConfirmTimes(0);
         Method confirmMethod = null;
