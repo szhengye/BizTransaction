@@ -21,8 +21,10 @@ public class ApplicationService9 extends AbstractTransaction {
     /*
         处理标识：
         1:异步调用订单验证->异步调用微信支付
-        2:异步调用订单验证->同步调用云闪付（超时后确认成功）->异步通知企业成功
-        3:异步调用订单验证->同步调用云闪付（超时后确认失败）->异步通知企业失败
+        2:异步调用订单验证->同步调用云闪付成功->异步通知企业成功
+        3:异步调用订单验证->同步调用云闪付失败->异步通知企业失败
+        4:异步调用订单验证->同步调用云闪付(超时后确认成功)->异步通知企业成功
+        5:异步调用订单验证->同步调用云闪付(超时后确认失败)->异步通知企业失败
     */
     private int flag;
 
@@ -48,7 +50,8 @@ public class ApplicationService9 extends AbstractTransaction {
     public Object doService(Object inParams) throws TransactionException {
         log.info("doService({})", inParams);
         String transactionKey = String.valueOf(Clock.systemDefaultZone().millis());
-        log.info("1.调用订单验证");
+        log.info("1.创建充值订单");
+        log.info("2.调用订单验证");
         // 异步调用订单验证
         ((ApplicationService9) AopContext.currentProxy()).doAsyncOrderValid("company_order_valid", transactionKey);
         return "调用订单验证成功";
@@ -64,10 +67,9 @@ public class ApplicationService9 extends AbstractTransaction {
     @AsyncService(callbackMethod = "doAsyncOrderValidCallback")
     public Object doAsyncOrderValid(String serviceId, String transactionKey) {
         log.info("doAsyncOrderValid({},{})", serviceId, transactionKey);
-        log.info("2.创建充值订单");
-        log.info("3.用户录入验证要素");
         // 新起线程，等待5秒后在子线程中模拟订单验证完成后回调
         String result = (String) testOuterService.doServiceAsync("company_order_valid", transactionKey, "doAsyncOrderValid");
+        log.info("3.用户录入验证要素");
         log.info(result);
         return "doAsyncOrderValid()调用完成";
     }
@@ -91,6 +93,8 @@ public class ApplicationService9 extends AbstractTransaction {
                 break;
             case 2:
             case 3:
+            case 4:
+            case 5:
                 // 同步调用云闪付
                 try {
                     ((ApplicationService9) AopContext.currentProxy()).doUnionPay(inParams);
@@ -113,9 +117,10 @@ public class ApplicationService9 extends AbstractTransaction {
     @AsyncService(callbackMethod = "doAsyncWePayCallback")
     public String doAsyncWePayRequest(String serviceId, String transactionKey) {
         log.info("doAsyncWePayRequest({},{})", serviceId, transactionKey);
-        log.info("6.创建支付订单");
+        log.info("6.创建微信支付订单");
         // 新起线程，等待5秒后在子线程中模拟微信支付完成后回调
         String result = (String) testOuterService.doServiceAsync(serviceId, transactionKey, "doAsyncWePayRequest");
+        log.info(("7.发送微信支付请求"));
         log.info(result);
         return "doAsyncWePayRequest()调用完成";
     }
@@ -128,8 +133,8 @@ public class ApplicationService9 extends AbstractTransaction {
      */
     public String doAsyncWePayCallback(Object inParams) {
         log.info("doAsyncWePayCallback({})", inParams);
-        log.info("7.支付订单完成");
-        log.info("8.交易订单完成");
+        log.info("8.支付订单完成");
+        log.info("9.交易订单完成");
         ((ApplicationService9) AopContext.currentProxy()).sendMessage("微信支付交易成功!");
         return "微信支付回调成功";
     }
@@ -143,9 +148,22 @@ public class ApplicationService9 extends AbstractTransaction {
     @SyncConfirmService(confirmMethod = "confirmUnionPay", commitMethod = "commitUnionPay", rollbackMethod = "rollbackUnionPay")
     public boolean doUnionPay(Object inParams) throws TransactionTimeOutException {
         log.info("doUnionPay({})", inParams);
-        log.info("6.模拟云闪付响应超时");
-        testOuterService.doServiceOfTimeout();
-        return true;
+        if (this.flag == 2) {
+            log.info("6.调用云闪付成功");
+            return true;
+        }
+        else if (this.flag == 3) {
+            log.info("6.调用云闪付失败");
+            return false;
+        }
+        else if (this.flag == 4 || this.flag == 5) {
+            log.info("6.模拟云闪付响应超时");
+            testOuterService.doServiceOfTimeout();
+        }
+        else {
+            return false;
+        }
+        return false;
     }
 
     /**
@@ -155,11 +173,11 @@ public class ApplicationService9 extends AbstractTransaction {
      */
     public boolean confirmUnionPay() throws TransactionTimeOutException {
         log.info("confirmUnionPay()");
-        if (this.flag == 2) {
+        if (this.flag == 4) {
             log.info("7.模拟同步调用云闪付（超时3次后确认成功）");
             return testOuterService.confirmService(true);
         }
-        if (this.flag == 3) {
+        if (this.flag == 5) {
             log.info("7.模拟同步调用云闪付（超时3次后确认失败）");
             return testOuterService.confirmService(false);
         }
