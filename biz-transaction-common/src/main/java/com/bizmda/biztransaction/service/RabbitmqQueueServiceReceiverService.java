@@ -28,7 +28,7 @@ public class RabbitmqQueueServiceReceiverService {
     @RabbitListener(queues = RabbitmqConfig.QueueServiceQueue, containerFactory = "multiListenerContainer")
 //    @RabbitListener(queues = RabbitmqConfig.QueueServiceQueue)
     public void consume(Map map) {
-//        log.info("***receive:{}", map);
+        log.info("***receive:{}", map);
         Object[] args = ((List)map.get("args")).toArray();
 //        log.info("args:{},{}",args.length,args);
         Map transactionMap = (Map)map.get("transactionBean");
@@ -41,12 +41,31 @@ public class RabbitmqQueueServiceReceiverService {
         String methodName = (String)map.get("methodName");
 //        log.info("methodName:{}",methodName);
         List<Class> classArray = new ArrayList<Class>();
-        for(String parameterType:parameterTypes) {
+
+        for(int i = 0;i<args.length;i++) {
+            log.info("arg:{}",args[i] instanceof Map,args[i] instanceof List);
             try {
-                classArray.add(Class.forName(parameterType));
+                classArray.add(Class.forName(parameterTypes[i]));
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
                 return;
+            }
+            if (args[i] instanceof Map) {
+                Object o = null;
+                try {
+                    o = Class.forName(parameterTypes[i]).newInstance();
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                    return;
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                    return;
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                    return;
+                }
+                BeanUtil.copyProperties(args[i],o);
+                args[i] = o;
             }
         }
         Class[] classes = classArray.toArray(new Class[0]);

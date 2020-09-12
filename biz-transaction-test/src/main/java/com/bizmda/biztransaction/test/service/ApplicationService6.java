@@ -17,17 +17,32 @@ import org.springframework.web.context.WebApplicationContext;
 @Service
 @Scope("prototype")
 public class ApplicationService6 extends AbstractTransaction {
+    private Person person;
+
+    public void setPerson(Person person) {
+        this.person = person;
+    }
+
+    public Person getPerson() {
+        return person;
+    }
+
     @Override
     public Object doService(Object inParams) {
 //        String result = this.step1("world");
-        ((ApplicationService6)AopContext.currentProxy()).step1("world",88);
+        Person person = new Person();
+        person.setAddress("address");
+        person.setMobile("mobile");
+        person.setName("name");
+        this.person = person;
+        ((ApplicationService6)AopContext.currentProxy()).step1("world",88,person);
 //        log.info("result:{}",result);
         return null;
     }
 
     @QueueService
-    public void step1(String str,Integer num) {
-        log.info("step1({},{})",str,num);
+    public void step1(String str,Integer num,Person person) {
+        log.info("step1({},{},{},{})",str,num,this.person.toString(),person.toString());
 //        return "hello:"+str + "，" + String.valueOf(num);
     }
 }
