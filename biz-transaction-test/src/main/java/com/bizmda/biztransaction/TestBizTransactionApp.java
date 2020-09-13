@@ -6,7 +6,7 @@ package com.bizmda.biztransaction;
 import com.bizmda.biztransaction.annotation.AsyncServiceAOP;
 import com.bizmda.biztransaction.annotation.QueueServiceAOP;
 import com.bizmda.biztransaction.annotation.SyncConfirmServiceAOP;
-import com.bizmda.biztransaction.service.SpringContextsUtil;
+import com.bizmda.biztransaction.util.SpringContextsUtil;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;

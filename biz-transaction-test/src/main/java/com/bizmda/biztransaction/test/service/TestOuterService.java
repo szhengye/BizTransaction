@@ -2,7 +2,7 @@ package com.bizmda.biztransaction.test.service;
 
 import com.bizmda.biztransaction.exception.TransactionException;
 import com.bizmda.biztransaction.exception.TransactionTimeOutException;
-import com.bizmda.biztransaction.service.AsyncServiceCallback;
+import com.bizmda.biztransaction.util.AsyncServiceCallback;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

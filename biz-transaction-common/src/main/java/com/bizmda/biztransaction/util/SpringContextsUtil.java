@@ -1,4 +1,4 @@
-package com.bizmda.biztransaction.service;
+package com.bizmda.biztransaction.util;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
