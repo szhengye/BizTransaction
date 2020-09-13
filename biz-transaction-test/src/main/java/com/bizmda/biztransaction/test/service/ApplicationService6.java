@@ -23,14 +23,12 @@ public class ApplicationService6 extends AbstractBizTran {
 
     @Override
     public Object doService(Object inParams) {
-//        String result = this.step1("world");
         Person person = new Person();
         person.setAddress("address");
         person.setMobile("mobile");
         person.setName("name");
         this.person = person;
         ((ApplicationService6)AopContext.currentProxy()).step1("world",88,person);
-//        log.info("result:{}",result);
         return null;
     }
 

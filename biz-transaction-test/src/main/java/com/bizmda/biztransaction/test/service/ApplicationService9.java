@@ -11,21 +11,20 @@ import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
-
 import java.time.Clock;
 
 @Slf4j
 @Service
 @Scope("prototype")
 public class ApplicationService9 extends AbstractBizTran {
-    /*
-        处理标识：
-        1:异步调用订单验证->异步调用微信支付
-        2:异步调用订单验证->同步调用云闪付成功->异步通知企业成功
-        3:异步调用订单验证->同步调用云闪付失败->异步通知企业失败
-        4:异步调用订单验证->同步调用云闪付(超时后确认成功)->异步通知企业成功
-        5:异步调用订单验证->同步调用云闪付(超时后确认失败)->异步通知企业失败
-    */
+    /**
+     * 处理标识：
+     * 1:异步调用订单验证->异步调用微信支付
+     * 2:异步调用订单验证->同步调用云闪付成功->异步通知企业成功
+     * 3:异步调用订单验证->同步调用云闪付失败->异步通知企业失败
+     * 4:异步调用订单验证->同步调用云闪付(超时后确认成功)->异步通知企业成功
+     * 5:异步调用订单验证->同步调用云闪付(超时后确认失败)->异步通知企业失败
+     */
     private int flag;
 
     @Autowired
@@ -100,9 +99,9 @@ public class ApplicationService9 extends AbstractBizTran {
                     ((ApplicationService9) AopContext.currentProxy()).doUnionPay(inParams);
                 } catch (TransactionTimeOutException e) {
                     log.error("抛出超时异常!");
-//                    e.printStackTrace();
                 }
                 break;
+            default:
         }
         return "订单验证回调成功";
     }

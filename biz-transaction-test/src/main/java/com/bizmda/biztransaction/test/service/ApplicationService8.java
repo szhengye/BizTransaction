@@ -29,7 +29,6 @@ public class ApplicationService8 extends AbstractBizTran {
     @AsyncService
     public Object doAsyncService(String serviceId,String transactionKey) {
         log.info("doAsyncService({},{})", serviceId,transactionKey);
-//        testOuterService.doServiceAsync(serviceId,transactionKey,"doAsyncService");
         return null;
     }
 

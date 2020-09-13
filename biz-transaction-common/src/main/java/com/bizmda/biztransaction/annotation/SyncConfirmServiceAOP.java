@@ -17,9 +17,8 @@ import java.lang.reflect.Method;
  */
 @Slf4j
 @Aspect
-@Order(-1) // 保证该AOP在@Transactional之前执行
+@Order(-1)
 public class SyncConfirmServiceAOP {
-    //    public static ThreadLocal<Boolean> syncServiceListener = new ThreadLocal<Boolean>();
     @Autowired
     private RabbitmqSenderService rabbitmqSenderService;
 

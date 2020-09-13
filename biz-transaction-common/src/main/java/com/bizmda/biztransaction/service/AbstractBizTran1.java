@@ -19,6 +19,7 @@ public abstract class AbstractBizTran1 extends AbstractBizTran {
      * @return 服务返回结果
      * @throws TransactionException
      */
+    @Override
     public Object doService(Object inParams) throws TransactionException {
         this.setConfirmTimes(0);
         this.beforeSyncService(inParams);

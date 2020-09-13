@@ -39,17 +39,13 @@ public class AsyncServiceCallback {
         }
         this.redisUtil.del(key);
         this.redisUtil.del(preKey);
-//        log.info("callback context:{}",context);
         Map transactionMap = (Map)context.get("transactionBean");
         String callbackMethodName = (String)context.get("callbackMethod");
-//        String timeoutMethod = (String)context.get("timeoutMethod");
-
 
         String beanName = (String)transactionMap.get("beanName");
         AbstractBizTran transaction2 = (AbstractBizTran) SpringContextsUtil.getBean(beanName, AbstractBizTran.class);
         BeanUtil.copyProperties(transactionMap, transaction2);
 
-//        log.info("callback transaction2:{},{}",callbackMethodName,transaction2);
         Method callbackMethod = null;
         try {
             callbackMethod = transaction2.getClass().getMethod(callbackMethodName,Object.class);

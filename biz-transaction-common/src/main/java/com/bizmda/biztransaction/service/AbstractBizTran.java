@@ -14,6 +14,7 @@ public abstract class AbstractBizTran implements BeanNameAware {
      */
     private String beanName;
 
+    @Override
     public void setBeanName(String name)
     {
         this.beanName = name;

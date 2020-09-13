@@ -18,7 +18,7 @@ import java.util.List;
  */
 @Slf4j
 @Aspect
-@Order(-1) // 保证该AOP在@Transactional之前执行
+@Order(-1)
 public class QueueServiceAOP {
     public static ThreadLocal<Boolean> queueServiceListener = new ThreadLocal<Boolean>();
     @Autowired
@@ -33,8 +33,8 @@ public class QueueServiceAOP {
      */
     @Around("@annotation(ds)")
     public Object doQueueService(ProceedingJoinPoint joinPoint, QueueService ds) throws Throwable {
-//        log.info("QueueService()");
         if (QueueServiceAOP.queueServiceListener.get() != null) {
+            QueueServiceAOP.queueServiceListener.remove();
             Object result = joinPoint.proceed();
             return result;
         }
@@ -46,7 +46,7 @@ public class QueueServiceAOP {
             parameterTypes.add(cls.getName());
         }
 
-        Object[] args = joinPoint.getArgs();// 参数值
+        Object[] args = joinPoint.getArgs();
         AbstractBizTran tranBean = (AbstractBizTran)joinPoint.getThis();
         rabbitmqSenderService.sendQueueService(ds.queue(),tranBean,methodName,parameterTypes,args);
         return null;

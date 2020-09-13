@@ -18,16 +18,17 @@ public class ApplicationService1 extends AbstractBizTran1 {
     @Autowired
     private TestOuterService testOuterService ;
 
-    /*
-    0：返回失败
-    1：返回成功
-    2：超时
+    /**
+     * 0：返回失败
+     * 1：返回成功
+     * 2：超时
      */
     private int doServiceFlag;
-    /*
-    0：确认失败
-    1：确认成功
-    2：超时
+
+    /**
+     * 0：确认失败
+     * 1：确认成功
+     * 2：超时
      */
     private int confirmServiceFlag;
 

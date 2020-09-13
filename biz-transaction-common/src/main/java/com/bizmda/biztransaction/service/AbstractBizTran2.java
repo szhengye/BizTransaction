@@ -22,6 +22,7 @@ public abstract class AbstractBizTran2 extends AbstractBizTran {
      * @return 服务返回结果
      * @throws TransactionException
      */
+    @Override
     public Object doService(Object inParams) throws TransactionException {
         return this.doServiceBeforeAsync(inParams);
     }

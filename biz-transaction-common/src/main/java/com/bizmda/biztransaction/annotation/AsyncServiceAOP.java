@@ -18,7 +18,7 @@ import java.util.Map;
  */
 @Slf4j
 @Aspect
-@Order(-1) // 保证该AOP在@Transactional之前执行
+@Order(-1)
 public class AsyncServiceAOP {
     /**
      * 设置实际存储数据的Redis主键和过期Redis主键的统一间隔时间
@@ -36,7 +36,7 @@ public class AsyncServiceAOP {
      */
     @Around(value = "@annotation(ds)")
     public Object doAsyncService(ProceedingJoinPoint joinPoint, AsyncService ds) throws Throwable {
-        Object[] args = joinPoint.getArgs();// 参数值
+        Object[] args = joinPoint.getArgs();
         Map context = new HashMap();
         AbstractBizTran transactionBean = (AbstractBizTran)joinPoint.getThis();
         Map transactionMap = new HashMap();

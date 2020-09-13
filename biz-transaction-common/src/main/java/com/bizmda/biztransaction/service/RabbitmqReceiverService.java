@@ -30,14 +30,12 @@ public class RabbitmqReceiverService {
      * 同步确认服务重试队列的侦听消费处理
      * @param map 传入的重试消息
      */
-    @RabbitListener(queues = RabbitmqConfig.syncConfirmServiceQueue, containerFactory = "multiListenerContainer")
+    @RabbitListener(queues = RabbitmqConfig.SYNC_CONFIRM_SERVICE_QUEUE, containerFactory = "multiListenerContainer")
     public void syncConfirmServiceListener(Map map) {
-//        log.info("***receive:{}", map);
         Map transactionMap = (Map)map.get("transactionBean");
         String beanName = (String)transactionMap.get("beanName");
         AbstractBizTran transactionBean = (AbstractBizTran) SpringContextsUtil.getBean(beanName, AbstractBizTran.class);
         BeanUtil.copyProperties(transactionMap, transactionBean);
-//        log.info("transactionBean:{}",transactionBean);
         String confirmMethodName = (String)map.get("confirmMethod");
         String commitMethodName = (String)map.get("commitMethod");
         String rollbackMethodName = (String)map.get("rollbackMethod");
@@ -83,24 +81,18 @@ public class RabbitmqReceiverService {
      * 异步通知服务队列的侦听消费处理
      * @param map 传入的异步通知服务消息
      */
-    @RabbitListener(queues = RabbitmqConfig.QueueServiceQueue, containerFactory = "multiListenerContainer")
+    @RabbitListener(queues = RabbitmqConfig.QUEUE_SERVICE_QUEUE, containerFactory = "multiListenerContainer")
     public void queueServiceListener(Map map) {
-//        log.info("***receive:{}", map);
         Object[] args = ((List)map.get("args")).toArray();
-//        log.info("args:{},{}",args.length,args);
         Map transactionMap = (Map)map.get("transactionBean");
         String beanName = (String)transactionMap.get("beanName");
         AbstractBizTran transactionBean = (AbstractBizTran) SpringContextsUtil.getBean(beanName, AbstractBizTran.class);
         BeanUtil.copyProperties(transactionMap, transactionBean);
-//        log.info("transactionBean:{}",transactionBean);
         String[] parameterTypes = ((List<String>) map.get("parameterTypes")).toArray(new String[0]);
-//        log.info("parameterTypes:{},{}",parameterTypes.length,parameterTypes);
         String methodName = (String)map.get("methodName");
-//        log.info("methodName:{}",methodName);
         List<Class> classArray = new ArrayList<Class>();
 
         for(int i = 0;i<args.length;i++) {
-//            log.info("arg:{}",args[i] instanceof Map,args[i] instanceof List);
             try {
                 classArray.add(Class.forName(parameterTypes[i]));
             } catch (ClassNotFoundException e) {

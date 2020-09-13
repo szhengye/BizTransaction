@@ -78,7 +78,6 @@ public class RabbitmqConfig {
 
 			@Override
 			public void confirm(CorrelationData correlationData, boolean ack, String cause) {
-//				log.info("消息发送成功:correlationData({}),ack({}),cause({})",correlationData,ack,cause);
 			}
 			 
             
@@ -121,12 +120,12 @@ public class RabbitmqConfig {
         return new Queue("dead.queue",true,false,false,argsMap);
     }
 
-    public final static String QueueServiceQueue = "queue.biztransaction.queueservice";
-    public final static String syncConfirmServiceQueue = "dead.real.queue";
+    public final static String QUEUE_SERVICE_QUEUE = "queue.biztransaction.queueservice";
+    public final static String SYNC_CONFIRM_SERVICE_QUEUE = "dead.real.queue";
 
     @Bean
-    public Queue QueueServiceQueue() {
-        return new Queue(RabbitmqConfig.QueueServiceQueue);
+    public Queue queueServiceQueue() {
+        return new Queue(RabbitmqConfig.QUEUE_SERVICE_QUEUE);
     }
 
     //死信交换机

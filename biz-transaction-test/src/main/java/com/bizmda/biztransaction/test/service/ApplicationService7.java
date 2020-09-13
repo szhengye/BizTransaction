@@ -32,10 +32,10 @@ public class ApplicationService7 extends AbstractBizTran {
     public boolean doSyncService(String flag) throws TransactionTimeOutException {
         log.info("doSyncService()");
         testOuterService.setMaxTimeoutTimes(3);
-        if (flag.equals("1")) {
+        if ("1".equals(flag)) {
             return testOuterService.doService(true);
         }
-        else if (flag.equals("0")) {
+        else if ("0".equals(flag)) {
             return testOuterService.doService(false);
         }
         else {

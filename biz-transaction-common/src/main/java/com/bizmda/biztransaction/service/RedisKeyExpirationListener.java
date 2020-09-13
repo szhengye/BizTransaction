@@ -74,10 +74,7 @@ public class RedisKeyExpirationListener extends KeyExpirationEventMessageListene
             throw new TransactionException(TransactionException.NO_MATCH_TRANSACTION_EXCEPTION_CODE);
         }
         this.redisUtil.del(key);
-        this.redisUtil.del(preKey);
-//        log.info("callback context:{}",context);
         Map transactionMap = (Map)context.get("transactionBean");
-//        String callbackMethodName = (String)context.get("callbackMethod");
         String timeoutMethodName = (String)context.get("timeoutMethod");
 
 
@@ -85,7 +82,6 @@ public class RedisKeyExpirationListener extends KeyExpirationEventMessageListene
         AbstractBizTran transaction2 = (AbstractBizTran) SpringContextsUtil.getBean(beanName, AbstractBizTran.class);
         BeanUtil.copyProperties(transactionMap, transaction2);
 
-//        log.info("callback transaction2:{},{}",callbackMethodName,transaction2);
         Method timeoutMethod = null;
         try {
             timeoutMethod = transaction2.getClass().getMethod(timeoutMethodName);
@@ -94,7 +90,6 @@ public class RedisKeyExpirationListener extends KeyExpirationEventMessageListene
             return;
         }
 
-//        TransactionException exception = new TransactionException(TransactionException.ASYNC_SERVICE_TIMEOUT_EXCEPTION_CODE);
         try {
             timeoutMethod.invoke(transaction2);
         } catch (IllegalAccessException e) {

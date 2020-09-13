@@ -30,14 +30,6 @@ public class ApplicationService3 extends AbstractBizTran1 {
         this.val1 = val1;
     }
 
-//    public int getVal2() {
-//        return val2;
-//    }
-//
-//    public void setVal2(int val2) {
-//        this.val2 = val2;
-//    }
-
     @Override
     public void beforeSyncService(Object msg) {
         log.info("beforeSyncService()");
