@@ -1,8 +1,7 @@
 package com.bizmda.biztransaction.annotation;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.bizmda.biztransaction.service.AbstractTransaction;
-import com.bizmda.biztransaction.service.RabbitmqSenderService;
+import com.bizmda.biztransaction.service.AbstractBizTran;
 import com.open.capacity.redis.util.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -14,21 +13,32 @@ import org.springframework.core.annotation.Order;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 异步服务回调切面
+ */
 @Slf4j
 @Aspect
 @Order(-1) // 保证该AOP在@Transactional之前执行
 public class AsyncServiceAOP {
+    /**
+     * 设置实际存储数据的Redis主键和过期Redis主键的统一间隔时间
+     */
     private final int secondsAfterExpired = 60;
     @Autowired
     private RedisUtil redisUtil ;
 
-//    public static ThreadLocal<Boolean> asyncServiceListener = new ThreadLocal<Boolean>();
-
+    /**
+     * 异步服务回调自定义注解的环绕方法
+     * @param joinPoint
+     * @param ds
+     * @return
+     * @throws Throwable
+     */
     @Around(value = "@annotation(ds)")
     public Object doAsyncService(ProceedingJoinPoint joinPoint, AsyncService ds) throws Throwable {
         Object[] args = joinPoint.getArgs();// 参数值
         Map context = new HashMap();
-        AbstractTransaction transactionBean = (AbstractTransaction)joinPoint.getThis();
+        AbstractBizTran transactionBean = (AbstractBizTran)joinPoint.getThis();
         Map transactionMap = new HashMap();
         BeanUtil.copyProperties(transactionBean,transactionMap);
         context.put("transactionBean",transactionMap);

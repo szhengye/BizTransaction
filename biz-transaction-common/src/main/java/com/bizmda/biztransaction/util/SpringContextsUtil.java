@@ -14,22 +14,15 @@ public class SpringContextsUtil implements ApplicationContextAware {
      * @param applicationContext
      * @throws BeansException
      */
-
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-
         SpringContextsUtil.applicationContext = applicationContext;
-
     }
-
 
     /**
      * @return ApplicationContext
      */
-
     public static ApplicationContext getApplicationContext() {
-
         return applicationContext;
-
     }
 
 
@@ -40,13 +33,9 @@ public class SpringContextsUtil implements ApplicationContextAware {
      * @return Object 一个以所给名字注册的bean的实例
      * @throws BeansException
      */
-
     public static Object getBean(String name) throws BeansException {
-
         return applicationContext.getBean(name);
-
     }
-
 
     /**
      * 获取类型为requiredType的对象
@@ -58,11 +47,8 @@ public class SpringContextsUtil implements ApplicationContextAware {
      * @return Object 返回requiredType类型对象
      * @throws BeansException
      */
-
     public static Object getBean(String name, Class requiredType) throws BeansException {
-
         return applicationContext.getBean(name, requiredType);
-
     }
 
 
@@ -72,13 +58,9 @@ public class SpringContextsUtil implements ApplicationContextAware {
      * @param name
      * @return boolean
      */
-
     public static boolean containsBean(String name) {
-
         return applicationContext.containsBean(name);
-
     }
-
 
     /**
      * 判断以给定名字注册的bean定义是一个singleton还是一个prototype。
@@ -89,11 +71,8 @@ public class SpringContextsUtil implements ApplicationContextAware {
      * @return boolean
      * @throws NoSuchBeanDefinitionException
      */
-
     public static boolean isSingleton(String name) throws NoSuchBeanDefinitionException {
-
         return applicationContext.isSingleton(name);
-
     }
 
 
@@ -102,12 +81,8 @@ public class SpringContextsUtil implements ApplicationContextAware {
      * @return Class 注册对象的类型
      * @throws NoSuchBeanDefinitionException
      */
-
     public static Class getType(String name) throws NoSuchBeanDefinitionException {
-
         return applicationContext.getType(name);
-
     }
-
 }
 

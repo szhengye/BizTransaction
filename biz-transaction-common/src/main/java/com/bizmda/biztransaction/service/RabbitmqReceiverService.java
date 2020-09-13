@@ -17,6 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * RabbitMQ接收服务
+ */
 @Slf4j
 @Service
 public class RabbitmqReceiverService {
@@ -32,7 +35,7 @@ public class RabbitmqReceiverService {
 //        log.info("***receive:{}", map);
         Map transactionMap = (Map)map.get("transactionBean");
         String beanName = (String)transactionMap.get("beanName");
-        AbstractTransaction transactionBean = (AbstractTransaction) SpringContextsUtil.getBean(beanName, AbstractTransaction.class);
+        AbstractBizTran transactionBean = (AbstractBizTran) SpringContextsUtil.getBean(beanName, AbstractBizTran.class);
         BeanUtil.copyProperties(transactionMap, transactionBean);
 //        log.info("transactionBean:{}",transactionBean);
         String confirmMethodName = (String)map.get("confirmMethod");
@@ -67,7 +70,7 @@ public class RabbitmqReceiverService {
                             new TransactionException(TransactionException.MAX_CONFIRM_EXCEPTION_CODE));
                     return;
                 }
-                rabbitmqSenderService.sendSyncService(transactionBean,confirmMethodName,commitMethodName,rollbackMethodName);
+                rabbitmqSenderService.sendSyncConfirmService(transactionBean,confirmMethodName,commitMethodName,rollbackMethodName);
             }
             else {
                 e.printStackTrace();
@@ -87,7 +90,7 @@ public class RabbitmqReceiverService {
 //        log.info("args:{},{}",args.length,args);
         Map transactionMap = (Map)map.get("transactionBean");
         String beanName = (String)transactionMap.get("beanName");
-        AbstractTransaction transactionBean = (AbstractTransaction) SpringContextsUtil.getBean(beanName, AbstractTransaction.class);
+        AbstractBizTran transactionBean = (AbstractBizTran) SpringContextsUtil.getBean(beanName, AbstractBizTran.class);
         BeanUtil.copyProperties(transactionMap, transactionBean);
 //        log.info("transactionBean:{}",transactionBean);
         String[] parameterTypes = ((List<String>) map.get("parameterTypes")).toArray(new String[0]);

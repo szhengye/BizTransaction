@@ -1,22 +1,16 @@
 package com.bizmda.biztransaction.test.service;
 
 import com.bizmda.biztransaction.annotation.QueueService;
-import com.bizmda.biztransaction.annotation.QueueServiceAOP;
-import com.bizmda.biztransaction.service.AbstractTransaction;
-import com.bizmda.biztransaction.service.AbstractTransaction2;
+import com.bizmda.biztransaction.service.AbstractBizTran;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.framework.AopContext;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.WebApplicationContext;
 
 @Slf4j
 @Service
 @Scope("prototype")
-public class ApplicationService6 extends AbstractTransaction {
+public class ApplicationService6 extends AbstractBizTran {
     private Person person;
 
     public void setPerson(Person person) {

@@ -5,7 +5,7 @@ import com.bizmda.biztransaction.annotation.QueueService;
 import com.bizmda.biztransaction.annotation.SyncConfirmService;
 import com.bizmda.biztransaction.exception.TransactionException;
 import com.bizmda.biztransaction.exception.TransactionTimeOutException;
-import com.bizmda.biztransaction.service.AbstractTransaction;
+import com.bizmda.biztransaction.service.AbstractBizTran;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ import java.time.Clock;
 @Slf4j
 @Service
 @Scope("prototype")
-public class ApplicationService9 extends AbstractTransaction {
+public class ApplicationService9 extends AbstractBizTran {
     /*
         处理标识：
         1:异步调用订单验证->异步调用微信支付

@@ -15,6 +15,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 
+/**
+ * 对Redis过期Key的监听
+ */
 @Slf4j
 @Component
 public class RedisKeyExpirationListener extends KeyExpirationEventMessageListener {
@@ -25,6 +28,11 @@ public class RedisKeyExpirationListener extends KeyExpirationEventMessageListene
         super(listenerContainer);
     }
 
+    /**
+     * key过期监听事件
+     * @param message
+     * @param pattern
+     */
     @Override
     public void onMessage(Message message, byte[] pattern) {
         String expiredKey = message.toString();
@@ -44,11 +52,20 @@ public class RedisKeyExpirationListener extends KeyExpirationEventMessageListene
         }
     }
 
+    /**
+     * 副key直接过期，应做异常处理和记录
+     * @param key
+     */
     private void doKeyExpire(String key) {
         String[] a = key.split(":");
         log.error("调用交易[{},{}]出错：没有触发Redis键超时，导致无法执行TimeoutMethod方法！");
     }
 
+    /**
+     * 主key过期，取出副key键值进行处理
+     * @param preKey
+     * @throws TransactionException
+     */
     private void doPreKeyExpire(String preKey) throws TransactionException {
         String[] a = preKey.split(":");
         String key = "biz:asyncservice:" + a[2] + ":" + a[3];
@@ -65,7 +82,7 @@ public class RedisKeyExpirationListener extends KeyExpirationEventMessageListene
 
 
         String beanName = (String)transactionMap.get("beanName");
-        AbstractTransaction transaction2 = (AbstractTransaction) SpringContextsUtil.getBean(beanName, AbstractTransaction.class);
+        AbstractBizTran transaction2 = (AbstractBizTran) SpringContextsUtil.getBean(beanName, AbstractBizTran.class);
         BeanUtil.copyProperties(transactionMap, transaction2);
 
 //        log.info("callback transaction2:{},{}",callbackMethodName,transaction2);

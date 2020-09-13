@@ -8,20 +8,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 异步回调服务的抽象处理类
+ */
 @Slf4j
-public abstract class AbstractTransaction2 extends AbstractTransaction {
+public abstract class AbstractBizTran2 extends AbstractBizTran {
     @Autowired
     private RedisUtil redisUtil ;
 
+    /**
+     * 服务调用的统一入口
+     * @param inParams 服务调用参数
+     * @return 服务返回结果
+     * @throws TransactionException
+     */
     public Object doService(Object inParams) throws TransactionException {
         return this.doServiceBeforeAsync(inParams);
     }
 
-    public void abortTransaction(Throwable e) {
-        log.info("abortTransaction:{}",e.getMessage());
-    }
-
-    // 在调用外部异步服务前，主动保存交易状态，一般在doServiceBeforeAsync()方法束时应执行，强烈建议在调用用外部通讯前执行。
+    /**
+     * 在调用外部异步服务前，主动保存交易状态，一般在doServiceBeforeAsync()方法束时应执行，强烈建议在调用用外部通讯前执行。
+     * @param outerId 服务id
+     * @param transactionKey 交易唯一主键
+     * @param expiredTime 交易超时时间
+     */
     public void saveState(String outerId, String transactionKey, long expiredTime) {
         log.info("saveState({},{},{})",outerId,transactionKey,expiredTime);
         String key = "biz:asyncservice:" + outerId + ":" + transactionKey;
@@ -34,10 +44,25 @@ public abstract class AbstractTransaction2 extends AbstractTransaction {
         this.redisUtil.set(key, context, expiredTime);
     }
 
-    // 实现调用外部异步服务之前的业务逻辑
+    /**
+     * 实现调用外部异步服务之前的业务逻辑
+     * @param inParams 调用输入参数
+     * @return 返回结果
+     * @throws TransactionException
+     */
     public abstract Object doServiceBeforeAsync(Object inParams) throws TransactionException;
-    // 实现外部异步服务回调后的业务逻辑
+
+    /**
+     * 实现外部异步服务回调后的业务逻辑
+     * @param inParams 调用输入参数
+     * @return 返回结果
+     * @throws TransactionException
+     */
     public abstract Object doServiceAfterAsync(Object inParams) throws TransactionException;
-    // 外部异步服务在约定的时间内没有发生回调操作，触发的业务逻辑
+
+    /**
+     * 外部异步服务在约定的时间内没有发生回调操作，触发的业务逻辑
+     * @throws TransactionException
+     */
     public abstract void callbackTimeout() throws TransactionException;
 }

@@ -1,6 +1,6 @@
 package com.bizmda.biztransaction.annotation;
 
-import com.bizmda.biztransaction.service.AbstractTransaction;
+import com.bizmda.biztransaction.service.AbstractBizTran;
 import com.bizmda.biztransaction.service.RabbitmqSenderService;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -13,6 +13,9 @@ import org.springframework.core.annotation.Order;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 异步服务注释的切面
+ */
 @Slf4j
 @Aspect
 @Order(-1) // 保证该AOP在@Transactional之前执行
@@ -21,6 +24,13 @@ public class QueueServiceAOP {
     @Autowired
     private RabbitmqSenderService rabbitmqSenderService;
 
+    /**
+     * 异步服务的环绕方法
+     * @param joinPoint
+     * @param ds
+     * @return
+     * @throws Throwable
+     */
     @Around("@annotation(ds)")
     public Object doQueueService(ProceedingJoinPoint joinPoint, QueueService ds) throws Throwable {
 //        log.info("QueueService()");
@@ -37,7 +47,7 @@ public class QueueServiceAOP {
         }
 
         Object[] args = joinPoint.getArgs();// 参数值
-        AbstractTransaction tranBean = (AbstractTransaction)joinPoint.getThis();
+        AbstractBizTran tranBean = (AbstractBizTran)joinPoint.getThis();
         rabbitmqSenderService.sendQueueService(ds.queue(),tranBean,methodName,parameterTypes,args);
         return null;
     }

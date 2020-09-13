@@ -1,7 +1,7 @@
 package com.bizmda.biztransaction.annotation;
 
 import com.bizmda.biztransaction.exception.TransactionTimeOutException;
-import com.bizmda.biztransaction.service.AbstractTransaction;
+import com.bizmda.biztransaction.service.AbstractBizTran;
 import com.bizmda.biztransaction.service.RabbitmqSenderService;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -12,6 +12,9 @@ import org.springframework.core.annotation.Order;
 
 import java.lang.reflect.Method;
 
+/**
+ * 同步超时确认服务自定义注解的切面
+ */
 @Slf4j
 @Aspect
 @Order(-1) // 保证该AOP在@Transactional之前执行
@@ -20,9 +23,16 @@ public class SyncConfirmServiceAOP {
     @Autowired
     private RabbitmqSenderService rabbitmqSenderService;
 
+    /**
+     * 同步超时确认服务注解的环绕方法
+     * @param joinPoint
+     * @param ds
+     * @return
+     * @throws Throwable
+     */
     @Around(value = "@annotation(ds)")
     public Object doSyncService(ProceedingJoinPoint joinPoint, SyncConfirmService ds) throws Throwable {
-        AbstractTransaction transactionBean = (AbstractTransaction) joinPoint.getThis();
+        AbstractBizTran transactionBean = (AbstractBizTran) joinPoint.getThis();
         transactionBean.setConfirmTimes(0);
         Method confirmMethod = null;
         Method commitMethod = null;
@@ -54,7 +64,7 @@ public class SyncConfirmServiceAOP {
         } catch (TransactionTimeOutException e) {
 //            log.info("szy:2");
 //            transactionBean.setConfirmTimes(transactionBean.getConfirmTimes() + 1);
-            rabbitmqSenderService.sendSyncService(transactionBean, ds.confirmMethod(), ds.commitMethod(), ds.rollbackMethod());
+            rabbitmqSenderService.sendSyncConfirmService(transactionBean, ds.confirmMethod(), ds.commitMethod(), ds.rollbackMethod());
             throw e;
         }
     }

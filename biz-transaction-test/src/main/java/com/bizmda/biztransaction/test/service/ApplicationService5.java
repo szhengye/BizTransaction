@@ -1,7 +1,7 @@
 package com.bizmda.biztransaction.test.service;
 
 import com.bizmda.biztransaction.exception.TransactionException;
-import com.bizmda.biztransaction.service.AbstractTransaction2;
+import com.bizmda.biztransaction.service.AbstractBizTran2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -12,7 +12,7 @@ import java.time.Clock;
 @Slf4j
 @Service
 @Scope("prototype")
-public class ApplicationService5 extends AbstractTransaction2 {
+public class ApplicationService5 extends AbstractBizTran2 {
 
     @Autowired
     private TestOuterService testOuterService ;

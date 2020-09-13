@@ -3,7 +3,7 @@ package com.bizmda.biztransaction.test.service;
 import com.bizmda.biztransaction.annotation.SyncConfirmService;
 import com.bizmda.biztransaction.exception.TransactionException;
 import com.bizmda.biztransaction.exception.TransactionTimeOutException;
-import com.bizmda.biztransaction.service.AbstractTransaction;
+import com.bizmda.biztransaction.service.AbstractBizTran;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @Scope("prototype")
-public class ApplicationService7 extends AbstractTransaction {
+public class ApplicationService7 extends AbstractBizTran {
     @Autowired
     private TestInnerService1 testInnerService1 ;
     @Autowired

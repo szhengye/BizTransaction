@@ -18,7 +18,7 @@ import org.springframework.core.env.Environment;
 import java.util.Map;
 
 /**
- * 通用化 Rabbitmq 配置
+ * RabbitMQ配置类
  */
 @Configuration
 public class RabbitmqConfig {
