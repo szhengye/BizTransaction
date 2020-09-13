@@ -122,6 +122,8 @@ public class RabbitmqConfig {
     }
 
     public final static String QueueServiceQueue = "queue.biztransaction.queueservice";
+    public final static String syncConfirmServiceQueue = "dead.real.queue";
+
     @Bean
     public Queue QueueServiceQueue() {
         return new Queue(RabbitmqConfig.QueueServiceQueue);
