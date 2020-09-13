@@ -18,6 +18,7 @@ import java.util.Map;
 @Aspect
 @Order(-1) // 保证该AOP在@Transactional之前执行
 public class AsyncServiceAOP {
+    private final int secondsAfterExpired = 60;
     @Autowired
     private RedisUtil redisUtil ;
 
@@ -33,8 +34,11 @@ public class AsyncServiceAOP {
         context.put("transactionBean",transactionMap);
         context.put("callbackMethod",ds.callbackMethod());
         context.put("timeoutMethod",ds.timeoutMethod());
+        String preKey = "biz:pre_asyncservice:" + args[0] + ":" + args[1];
         String key = "biz:asyncservice:" + args[0] + ":" + args[1];
-        this.redisUtil.set(key, context, ds.timeout());
+        log.info("time:{},{}",ds.timeout(),ds.timeout()+this.secondsAfterExpired);
+        this.redisUtil.set(preKey, "", ds.timeout());
+        this.redisUtil.set(key, context, ds.timeout() + this.secondsAfterExpired);
         Object result = joinPoint.proceed(args);
 
         return result;

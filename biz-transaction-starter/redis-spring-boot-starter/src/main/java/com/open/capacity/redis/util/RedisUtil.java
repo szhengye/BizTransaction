@@ -251,7 +251,7 @@ public class RedisUtil {
                     // redis info
                     byte[] values = redisObjectSerializer.serialize(value);
                     connection.set(key.getBytes(), values);
-                    connection.expire(key.getBytes(), 60 * time);
+                    connection.expire(key.getBytes(), time);
                     connection.close();
                     return 1L;
                 });

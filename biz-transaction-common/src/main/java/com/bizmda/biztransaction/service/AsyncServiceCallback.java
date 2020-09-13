@@ -21,12 +21,13 @@ public class AsyncServiceCallback {
     public Object callback(String outerId, String transactionKey, Object inParams) throws TransactionException {
         log.info("callback({},{},{})",outerId,transactionKey,inParams);
         String key = "biz:asyncservice:" + outerId + ":" + transactionKey;
-
+        String preKey = "biz:pre_asyncservice:" + outerId + ":" + transactionKey;
         Map context = (Map)this.redisUtil.get(key);
         if (context == null) {
             throw new TransactionException(TransactionException.NO_MATCH_TRANSACTION_EXCEPTION_CODE);
         }
         this.redisUtil.del(key);
+        this.redisUtil.del(preKey);
 //        log.info("callback context:{}",context);
         Map transactionMap = (Map)context.get("transactionBean");
         String callbackMethodName = (String)context.get("callbackMethod");

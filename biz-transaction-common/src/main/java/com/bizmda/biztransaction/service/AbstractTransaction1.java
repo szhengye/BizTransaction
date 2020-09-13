@@ -18,7 +18,7 @@ public abstract class AbstractTransaction1 extends AbstractTransaction {
                 return this.afterSyncService();
             } else {
                 this.rollbackService();
-                throw new TransactionException(TransactionException.CANCEL_SERVICE_EXCEPTION_CODE);
+                throw new TransactionException(TransactionException.ROLLBACK_SERVICE_EXCEPTION_CODE);
             }
         } catch (TransactionTimeOutException e) {
             rabbitmqSenderService.sendSyncService(this, "confirmSyncService", "afterSyncService", "rollbackService");

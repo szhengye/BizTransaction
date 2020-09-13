@@ -30,11 +30,15 @@ public class ApplicationService8 extends AbstractTransaction {
     @AsyncService
     public Object doAsyncService(String serviceId,String transactionKey) {
         log.info("doAsyncService({},{})", serviceId,transactionKey);
-        testOuterService.doServiceAsync(serviceId,transactionKey,"doAsyncService");
+//        testOuterService.doServiceAsync(serviceId,transactionKey,"doAsyncService");
         return null;
     }
 
     public void asyncServiceCallback(Object inParams) throws TransactionException {
         log.info("asyncServiceCallback({})", inParams);
+    }
+
+    public void asyncServiceTimeout() {
+        log.warn("asyncServiceTimeout()");
     }
 }
