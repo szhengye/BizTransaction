@@ -50,7 +50,7 @@ public class RabbitmqQueueServiceReceiverService {
                 e.printStackTrace();
                 return;
             }
-            if (args[i] instanceof Map) {
+            if (args[i] instanceof Map || args[i] instanceof List) {
                 Object o = null;
                 try {
                     o = Class.forName(parameterTypes[i]).newInstance();
