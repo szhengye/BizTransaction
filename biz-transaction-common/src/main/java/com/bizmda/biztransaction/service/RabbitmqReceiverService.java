@@ -24,7 +24,7 @@ import java.util.Map;
 @Service
 public class RabbitmqReceiverService {
     @Autowired
-    private RabbitmqSenderService rabbitmqSenderService;
+    private  BizTranService bizTranService;
 
     /**
      * 同步确认服务重试队列的侦听消费处理
@@ -32,49 +32,7 @@ public class RabbitmqReceiverService {
      */
     @RabbitListener(queues = RabbitmqConfig.SYNC_CONFIRM_SERVICE_QUEUE, containerFactory = "multiListenerContainer")
     public void syncConfirmServiceListener(Map map) {
-        Map transactionMap = (Map)map.get("transactionBean");
-        String beanName = (String)transactionMap.get("beanName");
-        AbstractBizTran transactionBean = (AbstractBizTran) SpringContextsUtil.getBean(beanName, AbstractBizTran.class);
-        BeanUtil.copyProperties(transactionMap, transactionBean);
-        String confirmMethodName = (String)map.get("confirmMethod");
-        String commitMethodName = (String)map.get("commitMethod");
-        String rollbackMethodName = (String)map.get("rollbackMethod");
-        Method confirmMethod = null;
-        Method commitMethod = null;
-        Method rollbackMethod = null;
-        try {
-            confirmMethod = transactionBean.getClass().getMethod(confirmMethodName);
-            commitMethod = transactionBean.getClass().getMethod(commitMethodName);
-            rollbackMethod = transactionBean.getClass().getMethod(rollbackMethodName);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-            return;
-        }
-
-        try {
-            Boolean confirmSuccess = (Boolean)confirmMethod.invoke(transactionBean);
-            if (confirmSuccess) {
-                commitMethod.invoke(transactionBean);
-            } else {
-                rollbackMethod.invoke(transactionBean);
-            }
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            if (e.getTargetException().getClass().equals(TransactionTimeOutException.class)) {
-                transactionBean.setConfirmTimes(transactionBean.getConfirmTimes() + 1);
-                if (transactionBean.getConfirmTimes() >= RabbitmqSenderService.expirationArray.length) {
-                    transactionBean.abortTransaction(
-                            new TransactionException(TransactionException.MAX_CONFIRM_EXCEPTION_CODE));
-                    return;
-                }
-                rabbitmqSenderService.sendSyncConfirmService(transactionBean,confirmMethodName,commitMethodName,rollbackMethodName);
-            }
-            else {
-                e.printStackTrace();
-            }
-        }
-
+        bizTranService.syncConfirmServiceReceive(map);
     }
 
     /**
@@ -83,58 +41,6 @@ public class RabbitmqReceiverService {
      */
     @RabbitListener(queues = RabbitmqConfig.QUEUE_SERVICE_QUEUE, containerFactory = "multiListenerContainer")
     public void queueServiceListener(Map map) {
-        Object[] args = ((List)map.get("args")).toArray();
-        Map transactionMap = (Map)map.get("transactionBean");
-        String beanName = (String)transactionMap.get("beanName");
-        AbstractBizTran transactionBean = (AbstractBizTran) SpringContextsUtil.getBean(beanName, AbstractBizTran.class);
-        BeanUtil.copyProperties(transactionMap, transactionBean);
-        String[] parameterTypes = ((List<String>) map.get("parameterTypes")).toArray(new String[0]);
-        String methodName = (String)map.get("methodName");
-        List<Class> classArray = new ArrayList<Class>();
-
-        for(int i = 0;i<args.length;i++) {
-            try {
-                classArray.add(Class.forName(parameterTypes[i]));
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-                return;
-            }
-            if (args[i] instanceof Map || args[i] instanceof List) {
-                Object o = null;
-                try {
-                    o = Class.forName(parameterTypes[i]).newInstance();
-                } catch (InstantiationException e) {
-                    e.printStackTrace();
-                    return;
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                    return;
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                    return;
-                }
-                BeanUtil.copyProperties(args[i],o);
-                args[i] = o;
-            }
-        }
-        Class[] classes = classArray.toArray(new Class[0]);
-        Method method = null;
-        try {
-            method = transactionBean.getClass().getMethod(methodName, classes);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-            return;
-        }
-        QueueServiceAOP.queueServiceListener.set(true);
-        try {
-            method.invoke(transactionBean,args);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
-        finally {
-            QueueServiceAOP.queueServiceListener.remove();
-        }
+        bizTranService.queueServiceService(map);
     }
 }

@@ -22,7 +22,7 @@ import java.util.Map;
 @Component
 public class RedisKeyExpirationListener extends KeyExpirationEventMessageListener {
     @Autowired
-    private RedisUtil redisUtil ;
+    private  BizTranService bizTranService;
 
     public RedisKeyExpirationListener(RedisMessageListenerContainer listenerContainer) {
         super(listenerContainer);
@@ -67,35 +67,6 @@ public class RedisKeyExpirationListener extends KeyExpirationEventMessageListene
      * @throws TransactionException
      */
     private void doPreKeyExpire(String preKey) throws TransactionException {
-        String[] a = preKey.split(":");
-        String key = "biz:asyncservice:" + a[2] + ":" + a[3];
-        Map context = (Map)this.redisUtil.get(key);
-        if (context == null) {
-            throw new TransactionException(TransactionException.NO_MATCH_TRANSACTION_EXCEPTION_CODE);
-        }
-        this.redisUtil.del(key);
-        Map transactionMap = (Map)context.get("transactionBean");
-        String timeoutMethodName = (String)context.get("timeoutMethod");
-
-
-        String beanName = (String)transactionMap.get("beanName");
-        AbstractBizTran transaction2 = (AbstractBizTran) SpringContextsUtil.getBean(beanName, AbstractBizTran.class);
-        BeanUtil.copyProperties(transactionMap, transaction2);
-
-        Method timeoutMethod = null;
-        try {
-            timeoutMethod = transaction2.getClass().getMethod(timeoutMethodName);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-            return;
-        }
-
-        try {
-            timeoutMethod.invoke(transaction2);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        bizTranService.asyncServiceTimeout(preKey);
     }
 }
