@@ -1,6 +1,7 @@
 package com.bizmda.biztransaction.service;
 
 import com.bizmda.biztransaction.exception.TransactionException;
+import com.bizmda.biztransaction.util.BizTranContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.BeanNameAware;
 
@@ -25,16 +26,29 @@ public abstract class AbstractBizTran implements BeanNameAware {
     }
 
     /**
+     * 交易类上下文环境
+     */
+    private static final ThreadLocal<BizTranContext> bizTranContextThreadLocal = new ThreadLocal<BizTranContext>();
+
+    public void setTranContext(BizTranContext bizTranContext) {
+        bizTranContextThreadLocal.set(bizTranContext);
+    }
+
+    public BizTranContext getTranContext() {
+        return bizTranContextThreadLocal.get();
+    }
+
+    /**
      * 记录确认重发次数
      */
-    private int confirmTimes;
+    private static final ThreadLocal<Integer> confirmTimesThreadLocal = new ThreadLocal<Integer>();
 
     public int getConfirmTimes() {
-        return confirmTimes;
+        return confirmTimesThreadLocal.get();
     }
 
     public void setConfirmTimes(int confirmTimes) {
-        this.confirmTimes = confirmTimes;
+        confirmTimesThreadLocal.set(confirmTimes);
     }
 
     /**
