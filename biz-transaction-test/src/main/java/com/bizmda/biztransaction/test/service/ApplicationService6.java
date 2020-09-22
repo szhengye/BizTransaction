@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-@Scope("prototype")
 public class ApplicationService6 extends AbstractBizTran {
     private Person person;
 

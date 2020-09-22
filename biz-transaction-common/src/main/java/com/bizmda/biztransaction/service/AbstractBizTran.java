@@ -35,7 +35,12 @@ public abstract class AbstractBizTran implements BeanNameAware {
     }
 
     public BizTranContext getTranContext() {
-        return bizTranContextThreadLocal.get();
+        BizTranContext bizTranContext = bizTranContextThreadLocal.get();
+        if (bizTranContext == null) {
+            this.setTranContext(new BizTranContext());
+            bizTranContext = bizTranContextThreadLocal.get();
+        }
+        return bizTranContext;
     }
 
     /**
@@ -44,7 +49,12 @@ public abstract class AbstractBizTran implements BeanNameAware {
     private static final ThreadLocal<Integer> confirmTimesThreadLocal = new ThreadLocal<Integer>();
 
     public int getConfirmTimes() {
-        return confirmTimesThreadLocal.get();
+        Integer confirmTimes = confirmTimesThreadLocal.get();
+        if (confirmTimes == null) {
+            this.setConfirmTimes(0);
+            confirmTimes = confirmTimesThreadLocal.get();
+        }
+        return confirmTimes;
     }
 
     public void setConfirmTimes(int confirmTimes) {

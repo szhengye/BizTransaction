@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import com.bizmda.biztransaction.annotation.QueueServiceAOP;
 import com.bizmda.biztransaction.exception.TransactionException;
 import com.bizmda.biztransaction.exception.TransactionTimeOutException;
+import com.bizmda.biztransaction.util.BizTranContext;
 import com.bizmda.biztransaction.util.SpringContextsUtil;
 import com.open.capacity.redis.util.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -51,6 +52,11 @@ public class BizTranService {
         AbstractBizTran bizTran = (AbstractBizTran) SpringContextsUtil.getBean(beanName, AbstractBizTran.class);
         BeanUtil.copyProperties(transactionMap, bizTran);
 
+        BizTranContext bizTranContext = new BizTranContext();
+        BeanUtil.copyProperties(transactionMap.get("tranContext"),bizTranContext);
+        bizTran.setTranContext(bizTranContext);
+        bizTran.setConfirmTimes((Integer)transactionMap.get("confirmTimes"));
+
         Method callbackMethod = null;
         try {
             callbackMethod = bizTran.getClass().getMethod(callbackMethodName,Object.class);
@@ -89,7 +95,10 @@ public class BizTranService {
         String beanName = (String)transactionMap.get("beanName");
         AbstractBizTran transaction2 = (AbstractBizTran) SpringContextsUtil.getBean(beanName, AbstractBizTran.class);
         BeanUtil.copyProperties(transactionMap, transaction2);
-
+        BizTranContext bizTranContext = new BizTranContext();
+        BeanUtil.copyProperties(transactionMap.get("tranContext"),bizTranContext);
+        transaction2.setTranContext(bizTranContext);
+        transaction2.setConfirmTimes((Integer)transactionMap.get("confirmTimes"));
         Method timeoutMethod = null;
         try {
             timeoutMethod = transaction2.getClass().getMethod(timeoutMethodName);
@@ -116,6 +125,10 @@ public class BizTranService {
         String beanName = (String)transactionMap.get("beanName");
         AbstractBizTran transactionBean = (AbstractBizTran) SpringContextsUtil.getBean(beanName, AbstractBizTran.class);
         BeanUtil.copyProperties(transactionMap, transactionBean);
+        BizTranContext bizTranContext = new BizTranContext();
+        BeanUtil.copyProperties(transactionMap.get("tranContext"),bizTranContext);
+        transactionBean.setTranContext(bizTranContext);
+        transactionBean.setConfirmTimes((Integer)transactionMap.get("confirmTimes"));
         String confirmMethodName = (String)map.get("confirmMethod");
         String commitMethodName = (String)map.get("commitMethod");
         String rollbackMethodName = (String)map.get("rollbackMethod");
@@ -166,6 +179,10 @@ public class BizTranService {
         String beanName = (String)transactionMap.get("beanName");
         AbstractBizTran transactionBean = (AbstractBizTran) SpringContextsUtil.getBean(beanName, AbstractBizTran.class);
         BeanUtil.copyProperties(transactionMap, transactionBean);
+        BizTranContext bizTranContext = new BizTranContext();
+        BeanUtil.copyProperties(transactionMap.get("tranContext"),bizTranContext);
+        transactionBean.setTranContext(bizTranContext);
+        transactionBean.setConfirmTimes((Integer)transactionMap.get("confirmTimes"));
         String[] parameterTypes = ((List<String>) map.get("parameterTypes")).toArray(new String[0]);
         String methodName = (String)map.get("methodName");
         List<Class> classArray = new ArrayList<Class>();

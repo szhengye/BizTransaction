@@ -41,6 +41,8 @@ public class AsyncServiceAOP {
         AbstractBizTran transactionBean = (AbstractBizTran)joinPoint.getThis();
         Map transactionMap = new HashMap();
         BeanUtil.copyProperties(transactionBean,transactionMap);
+        transactionMap.put("tranContext",transactionBean.getTranContext());
+        transactionMap.put("confirmTimes",transactionBean.getConfirmTimes());
         context.put("transactionBean",transactionMap);
         context.put("callbackMethod",ds.callbackMethod());
         context.put("timeoutMethod",ds.timeoutMethod());

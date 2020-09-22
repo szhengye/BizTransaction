@@ -11,7 +11,6 @@ import java.time.Clock;
 
 @Slf4j
 @Service
-@Scope("prototype")
 public class ApplicationService5 extends AbstractBizTran2 {
 
     @Autowired

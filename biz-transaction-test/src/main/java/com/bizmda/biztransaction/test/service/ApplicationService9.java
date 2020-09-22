@@ -15,7 +15,6 @@ import java.time.Clock;
 
 @Slf4j
 @Service
-@Scope("prototype")
 public class ApplicationService9 extends AbstractBizTran {
     /**
      * 处理标识：
@@ -51,6 +50,9 @@ public class ApplicationService9 extends AbstractBizTran {
         String transactionKey = String.valueOf(Clock.systemDefaultZone().millis());
         log.info("1.创建充值订单");
         log.info("2.调用订单验证");
+        this.getTranContext().setAttribute("a","111");
+        this.getTranContext().setAttribute("b",222);
+        log.info("BizTranContext:{}",this.getTranContext().getContextMap());
         // 异步调用订单验证
         ((ApplicationService9) AopContext.currentProxy()).doAsyncOrderValid("company_order_valid", transactionKey);
         return "调用订单验证成功";
@@ -81,6 +83,7 @@ public class ApplicationService9 extends AbstractBizTran {
      */
     public String doAsyncOrderValidCallback(Object inParams) {
         log.info("doAsyncOrderValidCallback({})", inParams);
+        log.info("BizTranContext:{}",this.getTranContext().getContextMap());
         log.info("4.充值订单验证");
         log.info(("5.调用支付请求"));
         String transactionKey = String.valueOf(Clock.systemDefaultZone().millis());
@@ -116,6 +119,7 @@ public class ApplicationService9 extends AbstractBizTran {
     @AsyncService(callbackMethod = "doAsyncWePayCallback")
     public String doAsyncWePayRequest(String serviceId, String transactionKey) {
         log.info("doAsyncWePayRequest({},{})", serviceId, transactionKey);
+        log.info("BizTranContext:{}",this.getTranContext().getContextMap());
         log.info("6.创建微信支付订单");
         // 新起线程，等待5秒后在子线程中模拟微信支付完成后回调
         String result = (String) testOuterService.doServiceAsync(serviceId, transactionKey, "doAsyncWePayRequest");
@@ -132,6 +136,7 @@ public class ApplicationService9 extends AbstractBizTran {
      */
     public String doAsyncWePayCallback(Object inParams) {
         log.info("doAsyncWePayCallback({})", inParams);
+        log.info("BizTranContext:{}",this.getTranContext().getContextMap());
         log.info("8.支付订单完成");
         log.info("9.交易订单完成");
         ((ApplicationService9) AopContext.currentProxy()).sendMessage("微信支付交易成功!");
@@ -147,6 +152,7 @@ public class ApplicationService9 extends AbstractBizTran {
     @SyncConfirmService(confirmMethod = "confirmUnionPay", commitMethod = "commitUnionPay", rollbackMethod = "rollbackUnionPay")
     public boolean doUnionPay(Object inParams) throws TransactionTimeOutException {
         log.info("doUnionPay({})", inParams);
+        log.info("BizTranContext:{}",this.getTranContext().getContextMap());
         if (this.flag == 2) {
             log.info("6.调用云闪付成功");
             return true;
@@ -172,6 +178,7 @@ public class ApplicationService9 extends AbstractBizTran {
      */
     public boolean confirmUnionPay() throws TransactionTimeOutException {
         log.info("confirmUnionPay()");
+        log.info("BizTranContext:{}",this.getTranContext().getContextMap());
         if (this.flag == 4) {
             log.info("7.模拟同步调用云闪付（超时3次后确认成功）");
             return testOuterService.confirmService(true);
@@ -188,6 +195,7 @@ public class ApplicationService9 extends AbstractBizTran {
      */
     public void commitUnionPay() {
         log.info("commitUnionPay()");
+        log.info("BizTranContext:{}",this.getTranContext().getContextMap());
         log.info("8.支付订单完成");
         log.info("9.交易订单完成");
         ((ApplicationService9) AopContext.currentProxy()).sendMessage("云闪付交易成功!");
@@ -198,6 +206,7 @@ public class ApplicationService9 extends AbstractBizTran {
      */
     public void rollbackUnionPay() {
         log.info("rollbackUnionPay()");
+        log.info("BizTranContext:{}",this.getTranContext().getContextMap());
         log.info("8.支付订单回滚");
         log.info("9.交易订单回滚");
         ((ApplicationService9) AopContext.currentProxy()).sendMessage("云闪付交易失败!");
@@ -210,5 +219,6 @@ public class ApplicationService9 extends AbstractBizTran {
     @QueueService
     public void sendMessage(String message) {
         log.info("发送信息给企业:{}", message);
+        log.info("BizTranContext:{}",this.getTranContext().getContextMap());
     }
 }

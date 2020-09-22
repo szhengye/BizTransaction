@@ -43,6 +43,8 @@ public class RabbitmqSenderService {
         Map context = new HashMap();
         Map transactionMap = new HashMap();
         BeanUtil.copyProperties(transactionBean,transactionMap);
+        transactionMap.put("tranContext",transactionBean.getTranContext());
+        transactionMap.put("confirmTimes",transactionBean.getConfirmTimes());
         context.put("transactionBean",transactionMap);
         context.put("methodName",methodName);
         context.put("parameterTypes",parameterTypes);
@@ -64,6 +66,9 @@ public class RabbitmqSenderService {
         Map context = new HashMap();
         Map transactionMap = new HashMap();
         BeanUtil.copyProperties(transactionBean,transactionMap);
+        transactionMap.put("tranContext",transactionBean.getTranContext());
+        transactionMap.put("confirmTimes",transactionBean.getConfirmTimes());
+        transactionMap.put("confirmTimes",transactionBean.getConfirmTimes());
         context.put("transactionBean",transactionMap);
         context.put("confirmMethod",confirmMethod);
         context.put("commitMethod",commitMethod);

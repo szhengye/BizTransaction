@@ -13,7 +13,6 @@ import java.time.Clock;
 
 @Slf4j
 @Service
-@Scope("prototype")
 public class ApplicationService8 extends AbstractBizTran {
 
     @Autowired

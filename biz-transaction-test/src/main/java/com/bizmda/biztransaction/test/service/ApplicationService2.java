@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-@Scope("prototype")
 public class ApplicationService2 extends AbstractBizTran1 {
     @Autowired
     private TestInnerService1 testInnerService1 ;
