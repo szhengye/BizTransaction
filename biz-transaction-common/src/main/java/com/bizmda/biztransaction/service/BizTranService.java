@@ -2,8 +2,8 @@ package com.bizmda.biztransaction.service;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.bizmda.biztransaction.annotation.QueueServiceAOP;
-import com.bizmda.biztransaction.exception.TransactionException;
-import com.bizmda.biztransaction.exception.TransactionTimeOutException;
+import com.bizmda.biztransaction.exception.BizTranException;
+import com.bizmda.biztransaction.exception.BizTranTimeOutException;
 import com.bizmda.biztransaction.util.BizTranContext;
 import com.bizmda.biztransaction.util.SpringContextsUtil;
 import com.open.capacity.redis.util.RedisUtil;
@@ -34,14 +34,14 @@ public class BizTranService {
      * @param transactionKey 交易唯一键
      * @param inParams 回调输入参数
      * @return
-     * @throws TransactionException
+     * @throws BizTranException
      */
-    public Object asyncServiceCallback(String outerId, String transactionKey, Object inParams) throws TransactionException {
+    public Object asyncServiceCallback(String outerId, String transactionKey, Object inParams) throws BizTranException {
         String key = "biz:asyncservice:" + outerId + ":" + transactionKey;
         String preKey = "biz:pre_asyncservice:" + outerId + ":" + transactionKey;
         Map context = (Map)this.redisUtil.get(key);
         if (context == null) {
-            throw new TransactionException(TransactionException.NO_MATCH_TRANSACTION_EXCEPTION_CODE);
+            throw new BizTranException(BizTranException.NO_MATCH_TRANSACTION_EXCEPTION_CODE);
         }
         this.redisUtil.del(key);
         this.redisUtil.del(preKey);
@@ -78,14 +78,14 @@ public class BizTranService {
     /**
      * 异步服务回调超时
      * @param preKey 超时的Redis key
-     * @throws TransactionException
+     * @throws BizTranException
      */
-    public void asyncServiceTimeout(String preKey) throws TransactionException {
+    public void asyncServiceTimeout(String preKey) throws BizTranException {
         String[] a = preKey.split(":");
         String key = "biz:asyncservice:" + a[2] + ":" + a[3];
         Map context = (Map)this.redisUtil.get(key);
         if (context == null) {
-            throw new TransactionException(TransactionException.NO_MATCH_TRANSACTION_EXCEPTION_CODE);
+            throw new BizTranException(BizTranException.NO_MATCH_TRANSACTION_EXCEPTION_CODE);
         }
         this.redisUtil.del(key);
         Map transactionMap = (Map)context.get("transactionBean");
@@ -154,11 +154,11 @@ public class BizTranService {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
-            if (e.getTargetException().getClass().equals(TransactionTimeOutException.class)) {
+            if (e.getTargetException().getClass().equals(BizTranTimeOutException.class)) {
                 transactionBean.setConfirmTimes(transactionBean.getConfirmTimes() + 1);
                 if (transactionBean.getConfirmTimes() >= RabbitmqSenderService.expirationArray.length) {
                     transactionBean.abortTransaction(
-                            new TransactionException(TransactionException.MAX_CONFIRM_EXCEPTION_CODE));
+                            new BizTranException(BizTranException.MAX_CONFIRM_EXCEPTION_CODE));
                     return;
                 }
                 rabbitmqSenderService.sendSyncConfirmService(transactionBean,confirmMethodName,commitMethodName,rollbackMethodName);

@@ -1,17 +1,10 @@
 package com.bizmda.biztransaction.util;
 
-import cn.hutool.core.bean.BeanUtil;
-import com.bizmda.biztransaction.exception.TransactionException;
-import com.bizmda.biztransaction.service.AbstractBizTran;
+import com.bizmda.biztransaction.exception.BizTranException;
 import com.bizmda.biztransaction.service.BizTranService;
-import com.open.capacity.redis.util.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Map;
 
 /**
  * 异步回调工具类
@@ -28,9 +21,9 @@ public class AsyncServiceCallback {
      * @param transactionKey 交易唯一主键
      * @param inParams 回调输入参数
      * @return 处理返回结果
-     * @throws TransactionException
+     * @throws BizTranException
      */
-    public Object callback(String outerId, String transactionKey, Object inParams) throws TransactionException {
+    public Object callback(String outerId, String transactionKey, Object inParams) throws BizTranException {
         log.info("callback({},{},{})",outerId,transactionKey,inParams);
         return bizTranService.asyncServiceCallback(outerId,transactionKey,inParams);
     }

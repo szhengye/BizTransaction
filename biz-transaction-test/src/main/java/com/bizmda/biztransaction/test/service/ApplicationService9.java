@@ -3,13 +3,12 @@ package com.bizmda.biztransaction.test.service;
 import com.bizmda.biztransaction.annotation.AsyncService;
 import com.bizmda.biztransaction.annotation.QueueService;
 import com.bizmda.biztransaction.annotation.SyncConfirmService;
-import com.bizmda.biztransaction.exception.TransactionException;
-import com.bizmda.biztransaction.exception.TransactionTimeOutException;
+import com.bizmda.biztransaction.exception.BizTranException;
+import com.bizmda.biztransaction.exception.BizTranTimeOutException;
 import com.bizmda.biztransaction.service.AbstractBizTran;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import java.time.Clock;
 
@@ -42,10 +41,10 @@ public class ApplicationService9 extends AbstractBizTran {
      *
      * @param inParams 交易输入参数
      * @return 交易返回参数
-     * @throws TransactionException
+     * @throws BizTranException
      */
     @Override
-    public Object doService(Object inParams) throws TransactionException {
+    public Object doService(Object inParams) throws BizTranException {
         log.info("doService({})", inParams);
         String transactionKey = String.valueOf(Clock.systemDefaultZone().millis());
         log.info("1.创建充值订单");
@@ -100,7 +99,7 @@ public class ApplicationService9 extends AbstractBizTran {
                 // 同步调用云闪付
                 try {
                     ((ApplicationService9) AopContext.currentProxy()).doUnionPay(inParams);
-                } catch (TransactionTimeOutException e) {
+                } catch (BizTranTimeOutException e) {
                     log.error("抛出超时异常!");
                 }
                 break;
@@ -147,10 +146,10 @@ public class ApplicationService9 extends AbstractBizTran {
      * 同步调用云闪付，支持超时重试确认和失败回滚机制
      * @param inParams 输入参数
      * @return
-     * @throws TransactionTimeOutException
+     * @throws BizTranTimeOutException
      */
     @SyncConfirmService(confirmMethod = "confirmUnionPay", commitMethod = "commitUnionPay", rollbackMethod = "rollbackUnionPay")
-    public boolean doUnionPay(Object inParams) throws TransactionTimeOutException {
+    public boolean doUnionPay(Object inParams) throws BizTranTimeOutException {
         log.info("doUnionPay({})", inParams);
         log.info("BizTranContext:{}",this.getTranContext().getContextMap());
         if (this.flag == 2) {
@@ -174,9 +173,9 @@ public class ApplicationService9 extends AbstractBizTran {
     /**
      * 同步调用云闪付的重试确认方法
      * @return 重试确认成功/失败标识
-     * @throws TransactionTimeOutException
+     * @throws BizTranTimeOutException
      */
-    public boolean confirmUnionPay() throws TransactionTimeOutException {
+    public boolean confirmUnionPay() throws BizTranTimeOutException {
         log.info("confirmUnionPay()");
         log.info("BizTranContext:{}",this.getTranContext().getContextMap());
         if (this.flag == 4) {

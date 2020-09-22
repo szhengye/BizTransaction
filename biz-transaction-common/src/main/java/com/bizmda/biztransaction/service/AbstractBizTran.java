@@ -1,6 +1,6 @@
 package com.bizmda.biztransaction.service;
 
-import com.bizmda.biztransaction.exception.TransactionException;
+import com.bizmda.biztransaction.exception.BizTranException;
 import com.bizmda.biztransaction.util.BizTranContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.BeanNameAware;
@@ -65,9 +65,9 @@ public abstract class AbstractBizTran implements BeanNameAware {
      * 服务调用入口
      * @param inParams 服务调用参数
      * @return 服务返回结果
-     * @throws TransactionException
+     * @throws BizTranException
      */
-    public abstract Object doService(Object inParams) throws TransactionException;
+    public abstract Object doService(Object inParams) throws BizTranException;
 
     /**
      * 交易处理异常中止时统一调用的方法

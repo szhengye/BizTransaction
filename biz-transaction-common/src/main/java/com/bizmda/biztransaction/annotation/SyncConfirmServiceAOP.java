@@ -1,6 +1,7 @@
 package com.bizmda.biztransaction.annotation;
 
-import com.bizmda.biztransaction.exception.TransactionTimeOutException;
+import com.bizmda.biztransaction.exception.BizTranRespErrorException;
+import com.bizmda.biztransaction.exception.BizTranTimeOutException;
 import com.bizmda.biztransaction.service.AbstractBizTran;
 import com.bizmda.biztransaction.service.RabbitmqSenderService;
 import lombok.extern.slf4j.Slf4j;
@@ -45,25 +46,15 @@ public class SyncConfirmServiceAOP {
         }
         Object[] args = joinPoint.getArgs();// 参数值
         try {
-            Boolean result = (Boolean) joinPoint.proceed(args);
-            if (result) {
-                commitMethod.invoke(transactionBean);
-            } else {
-                rollbackMethod.invoke(transactionBean);
-            }
-            return result;
-//        } catch (InvocationTargetException e) {
-////            log.info("szy:1");
-//            if (e.getTargetException().getClass().equals(TransactionTimeOutException.class)) {
-////                log.info("szy:2");
-//                transactionBean.setConfirmTimes(transactionBean.getConfirmTimes() + 1);
-//                rabbitmqSenderService.sendSyncService(transactionBean, ds.confirmMethod(), ds.commitMethod(), ds.rollbackMethod());
-//            }
-//            throw e;
-        } catch (TransactionTimeOutException e) {
-//            log.info("szy:2");
-//            transactionBean.setConfirmTimes(transactionBean.getConfirmTimes() + 1);
+            Object result1 = joinPoint.proceed(args);
+            Object result2 = commitMethod.invoke(transactionBean);
+            return result1;
+
+        } catch (BizTranTimeOutException e) {
             rabbitmqSenderService.sendSyncConfirmService(transactionBean, ds.confirmMethod(), ds.commitMethod(), ds.rollbackMethod());
+            throw e;
+        } catch (BizTranRespErrorException e) {
+            rollbackMethod.invoke(transactionBean);
             throw e;
         }
     }

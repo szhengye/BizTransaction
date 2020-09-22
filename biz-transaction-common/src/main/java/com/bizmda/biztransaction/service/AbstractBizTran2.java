@@ -1,7 +1,7 @@
 package com.bizmda.biztransaction.service;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.bizmda.biztransaction.exception.TransactionException;
+import com.bizmda.biztransaction.exception.BizTranException;
 import com.open.capacity.redis.util.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +20,10 @@ public abstract class AbstractBizTran2 extends AbstractBizTran {
      * 服务调用的统一入口
      * @param inParams 服务调用参数
      * @return 服务返回结果
-     * @throws TransactionException
+     * @throws BizTranException
      */
     @Override
-    public Object doService(Object inParams) throws TransactionException {
+    public Object doService(Object inParams) throws BizTranException {
         return this.doServiceBeforeAsync(inParams);
     }
 
@@ -49,21 +49,21 @@ public abstract class AbstractBizTran2 extends AbstractBizTran {
      * 实现调用外部异步服务之前的业务逻辑
      * @param inParams 调用输入参数
      * @return 返回结果
-     * @throws TransactionException
+     * @throws BizTranException
      */
-    public abstract Object doServiceBeforeAsync(Object inParams) throws TransactionException;
+    public abstract Object doServiceBeforeAsync(Object inParams) throws BizTranException;
 
     /**
      * 实现外部异步服务回调后的业务逻辑
      * @param inParams 调用输入参数
      * @return 返回结果
-     * @throws TransactionException
+     * @throws BizTranException
      */
-    public abstract Object doServiceAfterAsync(Object inParams) throws TransactionException;
+    public abstract Object doServiceAfterAsync(Object inParams) throws BizTranException;
 
     /**
      * 外部异步服务在约定的时间内没有发生回调操作，触发的业务逻辑
-     * @throws TransactionException
+     * @throws BizTranException
      */
-    public abstract void callbackTimeout() throws TransactionException;
+    public abstract void callbackTimeout() throws BizTranException;
 }

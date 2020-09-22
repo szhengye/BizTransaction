@@ -1,10 +1,9 @@
 package com.bizmda.biztransaction.test.service;
 
-import com.bizmda.biztransaction.exception.TransactionTimeOutException;
+import com.bizmda.biztransaction.exception.BizTranTimeOutException;
 import com.bizmda.biztransaction.service.AbstractBizTran1;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -39,7 +38,7 @@ public class ApplicationService3 extends AbstractBizTran1 {
     }
 
     @Override
-    public boolean doSyncService() throws TransactionTimeOutException {
+    public boolean doSyncService() throws BizTranTimeOutException {
         log.info("doSyncService()");
         testOuterService.doServiceOfTimeout();
         return true;
@@ -54,7 +53,7 @@ public class ApplicationService3 extends AbstractBizTran1 {
     }
 
     @Override
-    public boolean confirmSyncService() throws TransactionTimeOutException {
+    public boolean confirmSyncService() throws BizTranTimeOutException {
         log.info("confirmOuterService()");
         log.info("val1:{}, val2:{}",this.val1,this.val2);
 

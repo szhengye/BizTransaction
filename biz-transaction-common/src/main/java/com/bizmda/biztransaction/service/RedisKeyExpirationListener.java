@@ -1,19 +1,12 @@
 package com.bizmda.biztransaction.service;
 
-import cn.hutool.core.bean.BeanUtil;
-import com.bizmda.biztransaction.exception.TransactionException;
-import com.bizmda.biztransaction.util.SpringContextsUtil;
-import com.open.capacity.redis.util.RedisUtil;
+import com.bizmda.biztransaction.exception.BizTranException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.listener.KeyExpirationEventMessageListener;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Component;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Map;
 
 /**
  * 对Redis过期Key的监听
@@ -43,7 +36,7 @@ public class RedisKeyExpirationListener extends KeyExpirationEventMessageListene
         else if (expiredKey.startsWith("biz:pre_asyncservice:")) {
             try {
                 this.doPreKeyExpire(expiredKey);
-            } catch (TransactionException e) {
+            } catch (BizTranException e) {
                 e.printStackTrace();
             }
         }
@@ -64,9 +57,9 @@ public class RedisKeyExpirationListener extends KeyExpirationEventMessageListene
     /**
      * 主key过期，取出副key键值进行处理
      * @param preKey
-     * @throws TransactionException
+     * @throws BizTranException
      */
-    private void doPreKeyExpire(String preKey) throws TransactionException {
+    private void doPreKeyExpire(String preKey) throws BizTranException {
         bizTranService.asyncServiceTimeout(preKey);
     }
 }

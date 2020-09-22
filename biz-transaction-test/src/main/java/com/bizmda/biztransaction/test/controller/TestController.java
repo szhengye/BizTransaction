@@ -1,6 +1,6 @@
 package com.bizmda.biztransaction.test.controller;
 
-import com.bizmda.biztransaction.exception.TransactionException;
+import com.bizmda.biztransaction.exception.BizTranException;
 import com.bizmda.biztransaction.test.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ public class TestController {
 	public String applicationService1 (){
 		try {
 			applicationService1.doService("hello");
-		} catch (TransactionException e) {
+		} catch (BizTranException e) {
 			e.printStackTrace();
 		}
 		return "依次执行beforeSyncService()、doSyncService()、afterSyncService()";
@@ -44,7 +44,7 @@ public class TestController {
 	public String applicationService2 (){
 		try {
 			applicationService2.doService("hello");
-		} catch (TransactionException e) {
+		} catch (BizTranException e) {
 			e.printStackTrace();
 		}
 		return "doSyncService()返回失败，应触发rollbackService()";
@@ -54,7 +54,7 @@ public class TestController {
 	public String applicationService3 (){
 		try {
 			applicationService3.doService("hello");
-		} catch (TransactionException e) {
+		} catch (BizTranException e) {
 			log.info("applicationService3.doService() error code:{}",e.getCode());
 		}
 		return "doSyncService()超时，触发confirmSyncService()，连续2次超时，第3次返回成功";
@@ -64,7 +64,7 @@ public class TestController {
 	public String applicationService4 (){
 		try {
 			applicationService4.doService("hello");
-		} catch (TransactionException e) {
+		} catch (BizTranException e) {
 			e.printStackTrace();
 		}
 		return "doSyncService()超时，触发confirmSyncService()，连续2次超时，第3次返回失败";
@@ -74,7 +74,7 @@ public class TestController {
 	public String applicationService5 (){
 		try {
 			applicationService5.doService("hello");
-		} catch (TransactionException e) {
+		} catch (BizTranException e) {
 			e.printStackTrace();
 		}
 		return "异常调用，并回调";
@@ -90,7 +90,7 @@ public class TestController {
 	public String applicationService7(@RequestParam("flag")String flag){
 		try {
 			applicationService7.doService(flag);
-		} catch (TransactionException e) {
+		} catch (BizTranException e) {
 			e.printStackTrace();
 		}
 		return "测试@SyncService注解方法";
@@ -100,7 +100,7 @@ public class TestController {
 	public String applicationService8(){
 		try {
 			applicationService8.doService("hello");
-		} catch (TransactionException e) {
+		} catch (BizTranException e) {
 			e.printStackTrace();
 		}
 		return "测试@AsyncService注解方法";
@@ -111,7 +111,7 @@ public class TestController {
 		try {
 			applicationService9.setFlag(flag);
 			applicationService9.doService("hello");
-		} catch (TransactionException e) {
+		} catch (BizTranException e) {
 			e.printStackTrace();
 		}
 		return "全面测试@SyncService、@AsyncService、@QueueService注解方法:\n"
