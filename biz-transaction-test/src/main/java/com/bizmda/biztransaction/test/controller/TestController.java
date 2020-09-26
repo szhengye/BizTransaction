@@ -20,8 +20,6 @@ public class TestController {
 	@Autowired
 	private ApplicationService4 applicationService4 ;
 	@Autowired
-	private ApplicationService5 applicationService5 ;
-	@Autowired
 	private ApplicationService6 applicationService6 ;
 	@Autowired
 	private ApplicationService7 applicationService7 ;
@@ -33,7 +31,8 @@ public class TestController {
 	@GetMapping("/app1")
 	public String applicationService1 (){
 		try {
-			applicationService1.doService("hello");
+			String result = applicationService1.doService1("hello");
+			log.info("result:{}",result);
 		} catch (BizTranException e) {
 			e.printStackTrace();
 		}
@@ -43,7 +42,7 @@ public class TestController {
 	@GetMapping("/app2")
 	public String applicationService2 (){
 		try {
-			applicationService2.doService("hello");
+			applicationService2.doService2("hello");
 		} catch (BizTranException e) {
 			e.printStackTrace();
 		}
@@ -53,7 +52,7 @@ public class TestController {
 	@GetMapping("/app3")
 	public String applicationService3 (){
 		try {
-			applicationService3.doService("hello");
+			applicationService3.doService3("hello");
 		} catch (BizTranException e) {
 			log.info("applicationService3.doService() error code:{}",e.getCode());
 		}
@@ -63,33 +62,23 @@ public class TestController {
 	@GetMapping("/app4")
 	public String applicationService4 (){
 		try {
-			applicationService4.doService("hello");
+			applicationService4.doService4("hello");
 		} catch (BizTranException e) {
 			e.printStackTrace();
 		}
 		return "doSyncService()超时，触发confirmSyncService()，连续2次超时，第3次返回失败";
 	}
 
-	@GetMapping("/app5")
-	public String applicationService5 (){
-		try {
-			applicationService5.doService("hello");
-		} catch (BizTranException e) {
-			e.printStackTrace();
-		}
-		return "异常调用，并回调";
-	}
-
 	@GetMapping("/app6")
 	public String applicationService6 (){
-		applicationService6.doService("hello");
+		applicationService6.doService6("hello");
 		return "异步任务调用";
 	}
 
 	@GetMapping("/app7")
 	public String applicationService7(@RequestParam("flag")String flag){
 		try {
-			applicationService7.doService(flag);
+			applicationService7.doSyncService(flag);
 		} catch (BizTranException e) {
 			e.printStackTrace();
 		}

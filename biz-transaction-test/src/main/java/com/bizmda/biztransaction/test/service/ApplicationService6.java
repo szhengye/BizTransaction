@@ -10,30 +10,19 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class ApplicationService6 extends AbstractBizTran {
-    private Person person;
 
-    public void setPerson(Person person) {
-        this.person = person;
-    }
-
-    public Person getPerson() {
-        return person;
-    }
-
-    @Override
-    public Object doService(Object inParams) {
+    public Object doService6(Object inParams) {
         Person person = new Person();
         person.setAddress("address");
         person.setMobile("mobile");
         person.setName("name");
-        this.person = person;
+        this.getTranContext().setAttribute("person",person);
         ((ApplicationService6)AopContext.currentProxy()).step1("world",88,person);
         return null;
     }
 
     @QueueService
     public void step1(String str,Integer num,Person person) {
-        log.info("step1({},{},{},{})",str,num,this.person.toString(),person.toString());
-//        return "hello:"+str + "，" + String.valueOf(num);
+        log.info("step1({},{},{},{})",str,num,this.getTranContext().getAttribute("person"),person.toString());
     }
 }

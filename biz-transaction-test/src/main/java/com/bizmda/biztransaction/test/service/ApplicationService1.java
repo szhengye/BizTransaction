@@ -20,11 +20,11 @@ public class ApplicationService1 extends AbstractBizTran {
     private TestOuterService testOuterService ;
 
     @SyncConfirmService(confirmMethod="confirmSyncService",commitMethod="afterSyncService",rollbackMethod="rollbackService")
-    public String doService(String msg) throws BizTranTimeOutException, BizTranRespErrorException {
-        log.info("beforeSyncService()");
+    public String doService1(String msg) throws BizTranRespErrorException {
+        log.info("doService1({})",msg);
         testOuterService.init();
         testInnerService1.doService();
-        testOuterService.doService(true);
+        testOuterService.doServiceWithException(true);
         return "hello";
     }
 
@@ -41,10 +41,5 @@ public class ApplicationService1 extends AbstractBizTran {
     public void rollbackService() {
         log.info("rollbackService()");
         testInnerService1.rollbackService();
-    }
-
-    @Override
-    public Object doService(Object inParams) throws BizTranException {
-        return null;
     }
 }

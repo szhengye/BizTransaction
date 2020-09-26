@@ -48,7 +48,13 @@ public class SyncConfirmServiceAOP {
         try {
             Object result1 = joinPoint.proceed(args);
             Object result2 = commitMethod.invoke(transactionBean);
-            return result1;
+            // 如果commitMethod方法有返回值，则返回comiitMethod方法的结果，否则返回原方法的返回结果
+            if (result2 != null) {
+                return result2;
+            }
+            else {
+                return result1;
+            }
 
         } catch (BizTranTimeOutException e) {
             rabbitmqSenderService.sendSyncConfirmService(transactionBean, ds.confirmMethod(), ds.commitMethod(), ds.rollbackMethod());

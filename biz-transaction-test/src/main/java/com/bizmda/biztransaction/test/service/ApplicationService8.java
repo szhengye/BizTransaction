@@ -17,7 +17,6 @@ public class ApplicationService8 extends AbstractBizTran {
     @Autowired
     private TestOuterService testOuterService ;
 
-    @Override
     public Object doService(Object inParams) throws BizTranException {
         String transactionKey = String.valueOf(Clock.systemDefaultZone().millis());
         ((ApplicationService8) AopContext.currentProxy()).doAsyncService("TestOuterService",transactionKey);

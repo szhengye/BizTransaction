@@ -1,6 +1,7 @@
 package com.bizmda.biztransaction.test.service;
 
 import com.bizmda.biztransaction.exception.BizTranException;
+import com.bizmda.biztransaction.exception.BizTranRespErrorException;
 import com.bizmda.biztransaction.exception.BizTranTimeOutException;
 import com.bizmda.biztransaction.util.AsyncServiceCallback;
 import lombok.extern.slf4j.Slf4j;
@@ -25,14 +26,27 @@ public class TestOuterService {
         this.currentTimeoutTimes = 0;
     }
 
-    public boolean doService(boolean result) {
-        log.info("doService() 返回:{}",result);
+//    public boolean doService(boolean result) {
+//        log.info("doService() 返回:{}",result);
+//        try {
+//            Thread.sleep(3000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//        return result;
+//    }
+
+    public void doServiceWithException(boolean result) throws BizTranRespErrorException {
+        log.info("doService({})",result);
         try {
             Thread.sleep(3000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return result;
+        if (result) {
+            return;
+        }
+        throw new BizTranRespErrorException();
     }
 
     public Object doServiceAsync(String serviceId,String transactionKey,String inParams) {
@@ -83,19 +97,19 @@ public class TestOuterService {
         log.info("confirmService({})",result);
         return result;
     }
-
-    public boolean confirmServiceBeforeTimeout(int times,boolean result) throws BizTranTimeOutException {
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        this.currentTimeoutTimes ++;
-        if (this.currentTimeoutTimes <= times) {
-            log.info("confirmServiceBeforeTimeout()：响应超时");
-            throw new BizTranTimeOutException();
-        }
-        log.info("confirmServiceBeforeTimeout()：返回{}",result);
-        return result;
-    }
+//
+//    public boolean confirmServiceBeforeTimeout(int times,boolean result) throws BizTranTimeOutException {
+//        try {
+//            Thread.sleep(3000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//        this.currentTimeoutTimes ++;
+//        if (this.currentTimeoutTimes <= times) {
+//            log.info("confirmServiceBeforeTimeout()：响应超时");
+//            throw new BizTranTimeOutException();
+//        }
+//        log.info("confirmServiceBeforeTimeout()：返回{}",result);
+//        return result;
+//    }
 }

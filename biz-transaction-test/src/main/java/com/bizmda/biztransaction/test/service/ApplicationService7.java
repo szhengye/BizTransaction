@@ -2,6 +2,7 @@ package com.bizmda.biztransaction.test.service;
 
 import com.bizmda.biztransaction.annotation.SyncConfirmService;
 import com.bizmda.biztransaction.exception.BizTranException;
+import com.bizmda.biztransaction.exception.BizTranRespErrorException;
 import com.bizmda.biztransaction.exception.BizTranTimeOutException;
 import com.bizmda.biztransaction.service.AbstractBizTran;
 import lombok.extern.slf4j.Slf4j;
@@ -20,26 +21,20 @@ public class ApplicationService7 extends AbstractBizTran {
     private TestOuterService testOuterService ;
 
 
-    @Override
-    public Object doService(Object flag) throws BizTranException {
-            Object o =  ((ApplicationService7) AopContext.currentProxy()).doSyncService((String)flag);
-            return o;
-    }
-
     @SyncConfirmService
-    public boolean doSyncService(String flag) throws BizTranTimeOutException {
+    public String doSyncService(String flag) throws BizTranTimeOutException, BizTranRespErrorException {
         log.info("doSyncService()");
         testOuterService.setMaxTimeoutTimes(3);
         if ("1".equals(flag)) {
-            return testOuterService.doService(true);
+            testOuterService.doServiceWithException(true);
         }
         else if ("0".equals(flag)) {
-            return testOuterService.doService(false);
+            testOuterService.doServiceWithException(false);
         }
         else {
             testOuterService.doServiceOfTimeout();
-            return false;
         }
+        return "hello";
     }
 
     public boolean syncServiceConfirm() throws BizTranTimeOutException {

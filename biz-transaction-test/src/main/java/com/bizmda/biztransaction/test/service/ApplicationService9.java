@@ -43,7 +43,6 @@ public class ApplicationService9 extends AbstractBizTran {
      * @return 交易返回参数
      * @throws BizTranException
      */
-    @Override
     public Object doService(Object inParams) throws BizTranException {
         log.info("doService({})", inParams);
         String transactionKey = String.valueOf(Clock.systemDefaultZone().millis());

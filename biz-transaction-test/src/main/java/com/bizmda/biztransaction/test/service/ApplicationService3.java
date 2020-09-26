@@ -1,14 +1,17 @@
 package com.bizmda.biztransaction.test.service;
 
+import com.bizmda.biztransaction.annotation.SyncConfirmService;
+import com.bizmda.biztransaction.exception.BizTranException;
+import com.bizmda.biztransaction.exception.BizTranRespErrorException;
 import com.bizmda.biztransaction.exception.BizTranTimeOutException;
-import com.bizmda.biztransaction.service.AbstractBizTran1;
+import com.bizmda.biztransaction.service.AbstractBizTran;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-public class ApplicationService3 extends AbstractBizTran1 {
+public class ApplicationService3 extends AbstractBizTran {
     @Autowired
     private TestInnerService1 testInnerService1 ;
     @Autowired
@@ -16,35 +19,15 @@ public class ApplicationService3 extends AbstractBizTran1 {
     @Autowired
     private TestOuterService testOuterService ;
 
-    private String val1;
-    private int val2;
-
-    public String getVal1() {
-        return val1;
-    }
-
-    public void setVal1(String val1) {
-        log.info("setVal1({})",val1);
-        this.val1 = val1;
-    }
-
-    @Override
-    public void beforeSyncService(Object msg) {
-        log.info("beforeSyncService()");
-        testOuterService.setMaxTimeoutTimes(3);
+    @SyncConfirmService(confirmMethod="confirmSyncService",commitMethod="afterSyncService",rollbackMethod="rollbackService")
+    public String doService3(String msg) throws BizTranRespErrorException, BizTranTimeOutException {
+        log.info("doService3({})",msg);
+        testOuterService.init();
         testInnerService1.doService();
-        this.val1 = "Hello world!";
-        this.val2 = 98;
-    }
-
-    @Override
-    public boolean doSyncService() throws BizTranTimeOutException {
-        log.info("doSyncService()");
         testOuterService.doServiceOfTimeout();
-        return true;
+        return "hello";
     }
 
-    @Override
     public Object afterSyncService() {
         log.info("afterSyncService()");
 
@@ -52,15 +35,10 @@ public class ApplicationService3 extends AbstractBizTran1 {
         return null;
     }
 
-    @Override
-    public boolean confirmSyncService() throws BizTranTimeOutException {
-        log.info("confirmOuterService()");
-        log.info("val1:{}, val2:{}",this.val1,this.val2);
-
-        return testOuterService.confirmService(true);
+    public void confirmSyncService() throws BizTranTimeOutException {
+        testOuterService.confirmService(true);
     }
 
-    @Override
     public void rollbackService() {
         log.info("rollbackService()");
         testInnerService1.rollbackService();
