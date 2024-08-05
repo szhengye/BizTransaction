@@ -9,7 +9,7 @@
   <description>redis支撑</description>
   
   <properties>
-  	<redssion.version>3.11.6</redssion.version>
+  	<redssion.version>3.22.0</redssion.version>
   </properties>
   
   <dependencies>
